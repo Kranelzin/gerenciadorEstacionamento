@@ -5,34 +5,31 @@ package objetos;
  * @author marce
  */
 
+import exceptions.EstacionarVagaException;
 import java.sql.Timestamp;
 
 public class BoxVaga {
-    private final int boxVagaId;
-    private final String codigo;
+    private final char codigo;
     private final int vaga;
     private Timestamp dataHoraUltEntrada;
     private Timestamp dataHoraUltSaida;
     private boolean emUso;
+    private Veiculo veiculo;
     
     public BoxVaga(
-        int boxVagaId,
-        String codigo,
+        char codigo,
         int vaga,
         Timestamp dataHoraUltEntrada
     ){
-        this.boxVagaId = boxVagaId;
         this.codigo = codigo;
         this.vaga = vaga;
-        this.dataHoraUltEntrada = dataHoraUltEntrada;
-        emUso = true;
     }
     
-    public int getBoxVagaId(){
-        return boxVagaId;
+    public String getCodigoVaga(){
+        return codigo+Integer.toString(vaga);
     }
     
-    public String getCodigo(){
+    public char getCodigo(){
         return codigo;
     }
     
@@ -52,6 +49,10 @@ public class BoxVaga {
         return emUso;
     }
     
+    public void setEmUso(boolean emUso){
+        this.emUso = emUso;
+    }
+    
     public void setDataHoraUltEntrada(Timestamp dataHoraUtlEntrada){
         this.dataHoraUltEntrada = dataHoraUtlEntrada;
     }
@@ -60,8 +61,19 @@ public class BoxVaga {
         this.dataHoraUltSaida = dataHoraUltSaida;
     }
     
-    public void liberarVaga(Timestamp dataHoraUltSaida){
-        this.dataHoraUltEntrada = dataHoraUltSaida;
+    public void estacionarVaga(Timestamp dataHoraUltEntrada, Veiculo veiculo) throws EstacionarVagaException{
+        if(emUso)
+            throw new EstacionarVagaException(emUso, veiculo);
+        
+        this.dataHoraUltEntrada = dataHoraUltEntrada;
+        emUso = true;
+    }
+    
+    public void liberarVaga(Timestamp dataHoraUltSaida) throws EstacionarVagaException{
+        if(!emUso)
+            throw new EstacionarVagaException(!emUso, veiculo);
+        
+        this.dataHoraUltSaida = dataHoraUltSaida;
         emUso = false;
     }
 }

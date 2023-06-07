@@ -12,7 +12,7 @@ public class Empresa {
     private final int cpfCnpj;
     private final ArrayList<String> emails;
     private final ArrayList<Telefone> telfones;
-    private final Endereco endereco;
+    private final ArrayList<Endereco> enderecos;
     private ArrayList<Admin> admins;
     private ArrayList<Funcionario> funcionarios;
     private ArrayList<Cliente> clientes;
@@ -23,14 +23,14 @@ public class Empresa {
         int cpfCnpj, 
         ArrayList<String> emails, 
         ArrayList<Telefone> telfones,
-        Endereco endereco
+        ArrayList<Endereco> enderecos
     ) {
         this.empresaId = empresaId;
         this.empresaNome = empresaNome;
         this.cpfCnpj = cpfCnpj;
         this.emails = emails;
         this.telfones = telfones;
-        this.endereco = endereco;
+        this.enderecos = enderecos;
     }
     
     public int getEmpresaId() {
@@ -53,8 +53,8 @@ public class Empresa {
         return telfones;
     }
 
-    public Endereco getEndereco() {
-        return endereco;
+    public ArrayList<Endereco> getEnderecos() {
+        return enderecos;
     }
 
     public ArrayList<Admin> getAdmins() {

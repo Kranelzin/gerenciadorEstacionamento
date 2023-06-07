@@ -6,6 +6,7 @@ package objetos;
  */
 
 import enums.Meses;
+import exceptions.RealizarPagamentoException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class Cliente extends Usuario{
         int tipo, 
         String nomeUsuario, 
         int cpfCnpj, 
-        String email,
+        ArrayList<String> emails,
         ArrayList<Endereco> endereco, 
         ArrayList<Telefone> telefone,
         ArrayList<Veiculo> veiculos
@@ -33,7 +34,7 @@ public class Cliente extends Usuario{
             0, 
             nomeUsuario, 
             cpfCnpj, 
-            email,
+            emails,
             endereco, 
             telefone
             );
@@ -66,11 +67,11 @@ public class Cliente extends Usuario{
         veiculos.add(veiculo);
     }
     
-    public void realizarPagamento(BigDecimal valor, Timestamp data, Meses mesReferencia, int anoReferencia){
+    public void realizarPagamento(BigDecimal valor, Timestamp data, Meses mesReferencia, int anoReferencia) throws RealizarPagamentoException{
         realizarPagamento(valor, data, mesReferencia, anoReferencia, false);
     }
     
-    public void realizarPagamento(BigDecimal valor, Timestamp data, Meses mesReferencia, int anoReferencia, boolean pagamentoMensalidade){
+    public void realizarPagamento(BigDecimal valor, Timestamp data, Meses mesReferencia, int anoReferencia, boolean pagamentoMensalidade) throws RealizarPagamentoException{
         if(mensalista && pagamentoMensalidade)
             mensalidade.realizarPagamento(valor, data, mesReferencia, anoReferencia);
         pagamentos.add(new Pagamento(valor, data));

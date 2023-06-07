@@ -6,6 +6,7 @@ package objetos;
  */
 
 import enums.Meses;
+import exceptions.RealizarPagamentoException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class Mensalidade{
+    private BigDecimal valorMensalidade;
     private final Timestamp dataInicio;
     private final int diaVencimentoPagamento;
     private ArrayList<PagamentoMensalidade> pagamentosRealizados;
@@ -21,6 +23,10 @@ public class Mensalidade{
     public Mensalidade (int diaVencimentoPagamento, Timestamp dataInicio){
         this.diaVencimentoPagamento = diaVencimentoPagamento;
         this.dataInicio = dataInicio;
+    }
+    
+    public BigDecimal getValorMensalidade(){
+        return valorMensalidade;
     }
     
     public int getDiaVencimento(){
@@ -77,7 +83,10 @@ public class Mensalidade{
         return pagamentosRealizados;
     }
     
-    public void realizarPagamento(BigDecimal valor, Timestamp dataPagamento, Meses mesReferencia, int anoReferencia){
+    public void realizarPagamento(BigDecimal valor, Timestamp dataPagamento, Meses mesReferencia, int anoReferencia) throws RealizarPagamentoException{
+        if((valor.compareTo(valorMensalidade) != 0))
+            throw new RealizarPagamentoException(valorMensalidade);
+        
         PagamentoMensalidade pagamanetoMensalidade = new PagamentoMensalidade(
                 valor,
                 dataPagamento, 

@@ -9,15 +9,18 @@ public class Veiculo {
     private final String placa;
     private final String modelo;
     private final String marca;
+    private final int quantidadeRodas;
     
     public Veiculo(
         String placa,
         String modelo,
-        String marca
+        String marca,
+        int quantidadeRodas
     ){
         this.placa = placa;
         this.modelo = modelo;
         this.marca = marca;
+        this.quantidadeRodas = quantidadeRodas;
     }
     
     public String getPlaca(){
@@ -30,5 +33,9 @@ public class Veiculo {
     
     public String getMarca(){
         return marca;
+    }
+    
+    public int getQuantidadeRodas(){
+        return quantidadeRodas;
     }
 }

@@ -17,7 +17,7 @@ public class Admin extends Usuario{
         int tipo, 
         String nomeUsuario, 
         int cpfCnpj, 
-        String email,
+        ArrayList<String> emails,
         ArrayList<Endereco> endereco, 
         ArrayList<Telefone> telefone,
         String login,
@@ -28,7 +28,7 @@ public class Admin extends Usuario{
             2, 
             nomeUsuario, 
             cpfCnpj, 
-            email,
+            emails,
             endereco, 
             telefone
         );

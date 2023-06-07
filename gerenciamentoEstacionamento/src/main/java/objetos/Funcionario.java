@@ -16,7 +16,7 @@ public class Funcionario extends Usuario{
         int usuarioId, 
         String nomeUsuario, 
         int cpfCnpj, 
-        String email,
+        ArrayList<String> emails,
         ArrayList<Endereco> endereco, 
         ArrayList<Telefone> telefone,
         String login,
@@ -27,7 +27,7 @@ public class Funcionario extends Usuario{
             1, 
             nomeUsuario, 
             cpfCnpj, 
-            email,
+            emails,
             endereco, 
             telefone
         );

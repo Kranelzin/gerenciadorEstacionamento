@@ -7,7 +7,7 @@ package objetos;
 
 public class Telefone {
     private final int numero;
-    private final String tipo;
+    private final String tipo; //default 0;  0 = Celular, 1 = Fixo;
     private final boolean temWhats;
     
     public Telefone(

@@ -7,7 +7,7 @@ package objetos;
 
 public class Endereco {
     
-    private final String tipo;
+    private final String tipo; //default 0;  0 = Residencial, 1 = Comercial;
     private final int cep;
     private final String logradouro;
     private final int numero;
