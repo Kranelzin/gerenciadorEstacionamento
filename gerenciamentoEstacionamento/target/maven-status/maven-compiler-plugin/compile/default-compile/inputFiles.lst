@@ -8,6 +8,7 @@ C:\Users\marce\OneDrive\Documentos\NetBeansProjects\gerenciadorEstacionamento\ge
 C:\Users\marce\OneDrive\Documentos\NetBeansProjects\gerenciadorEstacionamento\gerenciamentoEstacionamento\src\main\java\com\mycompany\gerenciamentoestacionamento\GerenciamentoEstacionamento.java
 C:\Users\marce\OneDrive\Documentos\NetBeansProjects\gerenciadorEstacionamento\gerenciamentoEstacionamento\src\main\java\objetos\Admin.java
 C:\Users\marce\OneDrive\Documentos\NetBeansProjects\gerenciadorEstacionamento\gerenciamentoEstacionamento\src\main\java\objetos\BoxVaga.java
+C:\Users\marce\OneDrive\Documentos\NetBeansProjects\gerenciadorEstacionamento\gerenciamentoEstacionamento\src\main\java\banco\Insert.java
 C:\Users\marce\OneDrive\Documentos\NetBeansProjects\gerenciadorEstacionamento\gerenciamentoEstacionamento\src\main\java\banco\Conexao.java
 C:\Users\marce\OneDrive\Documentos\NetBeansProjects\gerenciadorEstacionamento\gerenciamentoEstacionamento\src\main\java\objetos\Pagamento.java
 C:\Users\marce\OneDrive\Documentos\NetBeansProjects\gerenciadorEstacionamento\gerenciamentoEstacionamento\src\main\java\exceptions\RealizarPagamentoException.java
@@ -18,4 +19,5 @@ C:\Users\marce\OneDrive\Documentos\NetBeansProjects\gerenciadorEstacionamento\ge
 C:\Users\marce\OneDrive\Documentos\NetBeansProjects\gerenciadorEstacionamento\gerenciamentoEstacionamento\src\main\java\enums\Meses.java
 C:\Users\marce\OneDrive\Documentos\NetBeansProjects\gerenciadorEstacionamento\gerenciamentoEstacionamento\src\main\java\objetos\Telefone.java
 C:\Users\marce\OneDrive\Documentos\NetBeansProjects\gerenciadorEstacionamento\gerenciamentoEstacionamento\src\main\java\interfaceGrafica\Login.java
+C:\Users\marce\OneDrive\Documentos\NetBeansProjects\gerenciadorEstacionamento\gerenciamentoEstacionamento\src\main\java\banco\SqlComandos.java
 C:\Users\marce\OneDrive\Documentos\NetBeansProjects\gerenciadorEstacionamento\gerenciamentoEstacionamento\src\main\java\objetos\Veiculo.java

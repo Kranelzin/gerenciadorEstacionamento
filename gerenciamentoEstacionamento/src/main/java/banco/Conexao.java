@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import java.util.Properties;
 
@@ -14,11 +15,11 @@ import java.util.Properties;
  *
  * @author marce
  */
-public class Conexao {
+public class Conexao{
     
-    private static Connection conexao = null;
+    private Connection conexao = null;
     
-    public static Connection getConexao(){
+    protected void abrirConexao(){
         if(conexao == null){
             
             try {
@@ -29,10 +30,9 @@ public class Conexao {
                 throw new BancoException("Erro ao conectar no banco: " + e.getMessage());
             }
         }
-        return conexao;
     }
     
-    public static void close(){
+    protected void close(){
         if(conexao != null){
             try{
                 conexao.close();
@@ -53,9 +53,12 @@ public class Conexao {
         }
     }
 
-    protected PreparedStatement getStatement(String sql) {
+    protected PreparedStatement getStatement(String sql, int generatedKeys) {
         try{
-            return conexao.prepareStatement(sql);
+            if(generatedKeys == Statement.RETURN_GENERATED_KEYS)
+                return conexao.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
+            else
+                return conexao.prepareStatement(sql);
         }
         catch(SQLException e){
             throw new BancoException("Erro ao gerar statement: " + e.getMessage());
@@ -63,12 +66,11 @@ public class Conexao {
     }
 
     public Consulta novaConsulta() {
-        try{
-            return new Consulta(this);
-        }  
-        catch(SQLException e){
-            throw new BancoException("Erro ao criar consulta: " + e.getMessage());
-        }
+        return new Consulta(this);
+    }
+    
+    public Insert novoInsert(){
+        return new Insert(this);
     }
     
 }

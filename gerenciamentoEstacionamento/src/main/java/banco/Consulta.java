@@ -1,67 +1,84 @@
 package banco;
 
 import exceptions.BancoException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
+import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author marce
  */
-public class Consulta {
-    private Connection conexao;
-    private Conexao con;
-    private String sql;
-    private PreparedStatement st;
-    private ResultSet rs;
-    private HashMap<String, Object> dados = new HashMap<String, Object>();
+public class Consulta extends SqlComandos{
     
-    public Consulta(Conexao con) throws SQLException{
-        this.con = con;
-        this.conexao = con.getConexao();
+    private int pos = -1;
+    
+    protected Consulta(Conexao con){
+        super(con);
     }
     
+    @Override
     public void setSql(String sql){
-        this.sql = sql;
+        super.sql = sql;
     }
     
-    public void pesquisar(Object... parametros){
-        st = con.getStatement(sql);
-
+    @Override
+    public void executarComando(Object... parametros){
+        setPreparedStatement(parametros);
         try{
-            for (int i = 0; i < parametros.length; i++) {
-
-                    st.setObject(i + 1, parametros[i]);
-
-            }
-
             rs = st.executeQuery();
-
-            ResultSetMetaData metaData = rs.getMetaData();
-
-            while(rs.next()){
-                for (int i = 1; i <= metaData.getColumnCount(); i++) {
-                    dados.put(metaData.getColumnName(i),rs.getObject(i));
-                }
-            }
             
-            con.close();
-        }
+            setResultado();
+            
+            
+        } 
         catch(SQLException e){
             throw new BancoException("Erro ao realizar consulta: " + e.getMessage());
         }
-        
     }
     
-    public HashMap<String, Object> getDados(){
-        return dados;
-    } 
+    public boolean fimConsulta(){
+        pos++;
+        if(pos == dados.size())
+            return true;
+        return false;
+    }
     
+    public BigDecimal getBigDecimal(String nomeColuna){
+        try{
+            return (BigDecimal) dados.get(pos).get(nomeColuna);
+        }
+        catch(NullPointerException e){
+            throw new BancoException(e.getMessage(), nomeColuna);
+        }
+    }
+    
+    public String getString(String nomeColuna){
+       try{
+            return (String) dados.get(pos).get(nomeColuna);
+        }
+        catch(NullPointerException e){
+            throw new BancoException(e.getMessage(), nomeColuna);
+        }
+    }
+    
+    public int getInt(String nomeColuna){
+        try{
+            return (int) dados.get(pos).get(nomeColuna);
+        }
+        catch(NullPointerException e){
+            throw new BancoException(e.getMessage(), nomeColuna);
+        }
+    }
+    
+    public Timestamp getTimestamp(String nomeColuna){
+        try{
+            return (Timestamp) dados.get(pos).get(nomeColuna);
+        }
+        catch(NullPointerException e){
+            throw new BancoException(e.getMessage(), nomeColuna);
+        }
+    }
 }

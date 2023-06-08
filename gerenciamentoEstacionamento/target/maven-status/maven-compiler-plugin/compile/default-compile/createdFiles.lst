@@ -1,3 +1,5 @@
+banco\Insert.class
+banco\SqlComandos.class
 banco\Consulta.class
 com\mycompany\gerenciamentoestacionamento\GerenciamentoEstacionamento.class
 banco\Conexao.class
