@@ -1,17 +1,16 @@
 package banco;
 
+import abstratas.SqlComandosRetorno;
 import exceptions.BancoException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  *
  * @author marce
  */
-public class Consulta extends SqlComandos{
+public class Consulta extends SqlComandosRetorno{
     
     private int pos = -1;
     
@@ -29,10 +28,9 @@ public class Consulta extends SqlComandos{
         setPreparedStatement(parametros);
         try{
             rs = st.executeQuery();
-            
+
             setResultado();
-            
-            
+            fecharConexao();
         } 
         catch(SQLException e){
             throw new BancoException("Erro ao realizar consulta: " + e.getMessage());

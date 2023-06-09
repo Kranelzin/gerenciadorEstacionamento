@@ -1,5 +1,6 @@
 package banco;
 
+import abstratas.SqlComandosRetorno;
 import exceptions.BancoException;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -8,9 +9,7 @@ import java.sql.Statement;
  *
  * @author marce
  */
-public class Insert extends SqlComandos{
-    
-    private int linhasAfetadas;
+public class Insert extends SqlComandosRetorno{
     
     protected Insert(Conexao con){
         super(con);
@@ -38,11 +37,11 @@ public class Insert extends SqlComandos{
     
     }
     
-    public Object getRetornoInsert(String coluna){
-        return getRetornoInsert(sql, 0);
+    public int getRetornoInsert(){
+        return getRetornoInsert( 0);
     }
-    public Object getRetornoInsert(String coluna, int linha){
-        return dados.get(linha).get(coluna);
+    public int getRetornoInsert(int linha){
+        return (int) dados.get(linha).get("GENERATED_KEY");
     }
     
     public int getLinhasAfetadas(){

@@ -14,6 +14,7 @@ public class BoxVaga {
     private Timestamp dataHoraUltEntrada;
     private Timestamp dataHoraUltSaida;
     private boolean emUso;
+    private boolean reservada;
     private Veiculo veiculo;
     
     public BoxVaga(
@@ -45,12 +46,24 @@ public class BoxVaga {
         return dataHoraUltSaida;
     }
     
-    public boolean getEmUso(){
+    public boolean isReservada(){
+        return reservada;
+    }
+    
+    public Veiculo getVeiculo(){
+        return veiculo;
+    }
+    
+    public boolean isEmUso(){
         return emUso;
     }
     
     public void setEmUso(boolean emUso){
         this.emUso = emUso;
+    }
+    
+    public void setReservada(boolean reservada){
+        this.reservada = reservada;
     }
     
     public void setDataHoraUltEntrada(Timestamp dataHoraUtlEntrada){
@@ -75,5 +88,6 @@ public class BoxVaga {
         
         this.dataHoraUltSaida = dataHoraUltSaida;
         emUso = false;
+        veiculo = null;
     }
 }

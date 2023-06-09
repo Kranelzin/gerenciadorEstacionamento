@@ -10,6 +10,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -19,20 +21,21 @@ public class Conexao{
     
     private Connection conexao = null;
     
-    protected void abrirConexao(){
+    public void abrirConexao(){
         if(conexao == null){
             
             try {
                 Properties propriedades = carregarProperties();
                 String url = propriedades.getProperty("url");
                 conexao = DriverManager.getConnection(url, propriedades);
+                conexao.setAutoCommit(false);
             } catch (SQLException e) {
                 throw new BancoException("Erro ao conectar no banco: " + e.getMessage());
             }
         }
     }
     
-    protected void close(){
+    public void close(){
         if(conexao != null){
             try{
                 conexao.close();
@@ -53,7 +56,7 @@ public class Conexao{
         }
     }
 
-    protected PreparedStatement getStatement(String sql, int generatedKeys) {
+    public PreparedStatement getStatement(String sql, int generatedKeys) {
         try{
             if(generatedKeys == Statement.RETURN_GENERATED_KEYS)
                 return conexao.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
@@ -64,6 +67,22 @@ public class Conexao{
             throw new BancoException("Erro ao gerar statement: " + e.getMessage());
         }
     }
+    
+    protected void commit(){
+        try {
+            conexao.commit();
+        } catch (SQLException e) {
+            throw new BancoException("Erro ao dar commit: " + e.getMessage());
+        }
+    }
+    
+    protected void rollback(){
+        try {
+            conexao.rollback();
+        } catch (SQLException e) {
+             throw new BancoException("Erro ao dar rollback: " + e.getMessage());
+        }
+    }
 
     public Consulta novaConsulta() {
         return new Consulta(this);
@@ -71,6 +90,10 @@ public class Conexao{
     
     public Insert novoInsert(){
         return new Insert(this);
+    }
+    
+    public Update novoUpdate(){
+        return new Update(this);
     }
     
 }

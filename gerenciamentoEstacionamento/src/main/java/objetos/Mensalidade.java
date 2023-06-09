@@ -16,6 +16,8 @@ import java.util.GregorianCalendar;
 public class Mensalidade{
     private BigDecimal valorMensalidade;
     private final Timestamp dataInicio;
+    private Timestamp dataFim;
+    private boolean ativa;
     private final int diaVencimentoPagamento;
     private ArrayList<PagamentoMensalidade> pagamentosRealizados;
     private ArrayList<PagamentoMensalidade> pagamentos;
@@ -23,6 +25,7 @@ public class Mensalidade{
     public Mensalidade (int diaVencimentoPagamento, Timestamp dataInicio){
         this.diaVencimentoPagamento = diaVencimentoPagamento;
         this.dataInicio = dataInicio;
+        ativa = true;
     }
     
     public BigDecimal getValorMensalidade(){
@@ -95,5 +98,10 @@ public class Mensalidade{
         );
         
         pagamentosRealizados.add(pagamanetoMensalidade);
+    }
+    
+    public void canelarMensalidade(Timestamp dataFim){
+        this.dataFim = dataFim;
+        ativa = false;
     }
 }
