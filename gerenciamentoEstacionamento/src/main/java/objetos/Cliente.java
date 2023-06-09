@@ -116,6 +116,7 @@ public class Cliente extends Usuario{
             if(boxVaga.getCodigoVaga().contentEquals(vagaLiberar.getCodigoVaga()) && !boxVaga.isReservada()){
                 boxVaga.liberarVaga(dataHoraSaida);
                 boxVagas.remove(boxVaga);
+                break;
             }
         }
     }
