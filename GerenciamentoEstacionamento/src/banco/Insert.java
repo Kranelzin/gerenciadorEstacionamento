@@ -37,13 +37,10 @@ public class Insert extends SqlComandosRetorno{
     }
     
     public int getRetornoInsert(){
-        return getRetornoInsert( 0);
+        return getRetornoInsert(0);
     }
     public int getRetornoInsert(int linha){
         return (int) dados.get(linha).get("GENERATED_KEY");
     }
-    
-    public int getLinhasAfetadas(){
-        return linhasAfetadas;
-    }
+   
 }

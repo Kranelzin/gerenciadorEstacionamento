@@ -22,14 +22,13 @@ public class Update extends SqlComandos{
     public void executarComando(Object... parametros){
         setPreparedStatement(parametros);
          try{
-            st.executeUpdate();
+            linhasAfetadas = st.executeUpdate();
             fecharConexao();
         }
         catch(SQLException e){
             throw new BancoException("Erro ao realizar update: " + e.getMessage());
         }
         
-    
     }
     
 }

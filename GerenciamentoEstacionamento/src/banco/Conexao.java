@@ -21,7 +21,7 @@ public class Conexao{
     private boolean somenteConsulta = false;
     
     public void abrirConexao(){
-        abrirConexao();
+        abrirConexao(false);
     }
     
     public void abrirConexao(boolean somenteConsulta){
@@ -40,8 +40,10 @@ public class Conexao{
     }
     
     public void fecharConexao(){
-        if(somenteConsulta)
+        if(somenteConsulta){
+            close();
             return;
+        }
         
         try{
             conexao.commit();

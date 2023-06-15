@@ -11,19 +11,26 @@ import java.sql.SQLException;
  */
 public abstract class SqlComandos implements InterfaceSql{
     
-    public Conexao con;
-    public String sql;
-    public PreparedStatement st;
+    protected Conexao con;
+    protected String sql;
+    protected PreparedStatement st;
+    protected int linhasAfetadas;
     
-    public SqlComandos(Conexao con){
+    protected SqlComandos(Conexao con){
         con.abrirConexao();
         this.con = con;
     }
     
-    public void setPreparedStatement(Object... parametros){
+    public int getLinhasAfetadas(){
+        return linhasAfetadas;
+    }
+    
+    protected void setPreparedStatement(Object... parametros){
         setPreparedStatement(0, parametros);
     }
-    public void setPreparedStatement(int generatedKeys, Object... parametros){
+    protected void setPreparedStatement(int generatedKeys, Object... parametros){
+        if(sql == null)
+            throw new BancoException("O sql não foi informado! ");
         st = con.getStatement(sql, generatedKeys);
 
         try{
@@ -36,7 +43,7 @@ public abstract class SqlComandos implements InterfaceSql{
         }
         
     }
-    
+     
     protected void fecharConexao(){
         try{
             if(st != null)

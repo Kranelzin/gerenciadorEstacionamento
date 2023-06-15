@@ -23,7 +23,7 @@ public class Delete extends SqlComandos{
     
     setPreparedStatement(parametros);
          try{
-            st.executeUpdate();
+            linhasAfetadas = st.executeUpdate();
             fecharConexao();
         }
         catch(SQLException e){

@@ -15,15 +15,14 @@ import java.util.HashMap;
  */
 public abstract class SqlComandosRetorno extends SqlComandos implements InterfaceSql{
     
-    public ResultSet rs;
-    public ArrayList<HashMap<String, Object>> dados = new ArrayList<>();
-    public int linhasAfetadas;
+    protected ResultSet rs;
+    protected ArrayList<HashMap<String, Object>> dados = new ArrayList<>();
     
-    public SqlComandosRetorno(Conexao con){
+    protected SqlComandosRetorno(Conexao con){
         super(con);
     }
     
-    public void setResultado(){
+    protected void setResultado(){
         try{
             while(rs.next()){
                 

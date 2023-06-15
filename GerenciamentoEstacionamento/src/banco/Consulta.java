@@ -38,44 +38,38 @@ public class Consulta extends SqlComandosRetorno{
     
     public boolean fimConsulta(){
         pos++;
-        if(pos == dados.size())
-            return true;
-        return false;
+        return pos == dados.size();
     }
     
-    public BigDecimal getBigDecimal(String nomeColuna){
-        try{
-            return (BigDecimal) dados.get(pos).get(nomeColuna);
+    public BigDecimal getBigDecimal(String nomeColuna) {
+    return getValor(nomeColuna, BigDecimal.class);
+}
+
+    public String getString(String nomeColuna) {
+        return getValor(nomeColuna, String.class);
+    }
+
+    public int getInt(String nomeColuna) {
+        return getValor(nomeColuna, Integer.class);
+    }
+
+    public Timestamp getTimestamp(String nomeColuna) {
+        return getValor(nomeColuna, Timestamp.class);
+    }
+
+    private <Generico> Generico getValor(String nomeColuna, Class<Generico> tipoDado) {
+        if (pos == -1) {
+            throw new BancoException("Loop de consulta não iniciado, usar while(!fimConsulta()) para obter dados");
         }
-        catch(NullPointerException e){
+        try {
+            Object valor = dados.get(pos).get(nomeColuna);
+            if (valor == null || !tipoDado.isInstance(valor)) {
+                throw new BancoException("Valor inválido para a coluna: " + nomeColuna);
+            }
+            return tipoDado.cast(valor);
+        } catch (NullPointerException e) {
             throw new BancoException(e.getMessage(), nomeColuna);
         }
     }
-    
-    public String getString(String nomeColuna){
-       try{
-            return (String) dados.get(pos).get(nomeColuna);
-        }
-        catch(NullPointerException e){
-            throw new BancoException(e.getMessage(), nomeColuna);
-        }
-    }
-    
-    public int getInt(String nomeColuna){
-        try{
-            return (int) dados.get(pos).get(nomeColuna);
-        }
-        catch(NullPointerException e){
-            throw new BancoException(e.getMessage(), nomeColuna);
-        }
-    }
-    
-    public Timestamp getTimestamp(String nomeColuna){
-        try{
-            return (Timestamp) dados.get(pos).get(nomeColuna);
-        }
-        catch(NullPointerException e){
-            throw new BancoException(e.getMessage(), nomeColuna);
-        }
-    }
+
 }
