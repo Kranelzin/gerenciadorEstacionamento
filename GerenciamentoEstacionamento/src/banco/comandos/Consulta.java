@@ -1,5 +1,6 @@
-package banco;
+package banco.comandos;
 
+import banco.comandos.Conexao;
 import exceptions.BancoException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -32,6 +33,7 @@ public class Consulta extends SqlComandosRetorno{
             fecharConexao();
         } 
         catch(SQLException e){
+            con.fecharConexao();
             throw new BancoException("Erro ao realizar consulta: " + e.getMessage());
         }
     }
@@ -42,8 +44,12 @@ public class Consulta extends SqlComandosRetorno{
     }
     
     public BigDecimal getBigDecimal(String nomeColuna) {
-    return getValor(nomeColuna, BigDecimal.class);
-}
+        return getValor(nomeColuna, BigDecimal.class);
+    }
+    
+    public boolean getBoolean(String nomeColuna) {
+        return getValor(nomeColuna, boolean.class);
+    }
 
     public String getString(String nomeColuna) {
         return getValor(nomeColuna, String.class);
@@ -63,10 +69,12 @@ public class Consulta extends SqlComandosRetorno{
         }
         try {
             Object valor = dados.get(pos).get(nomeColuna);
-            if (valor == null || !tipoDado.isInstance(valor)) {
+            
+            if (valor == null || !tipoDado.isInstance(valor))
                 throw new BancoException("Valor inválido para a coluna: " + nomeColuna);
-            }
+            
             return tipoDado.cast(valor);
+            
         } catch (NullPointerException e) {
             throw new BancoException(e.getMessage(), nomeColuna);
         }

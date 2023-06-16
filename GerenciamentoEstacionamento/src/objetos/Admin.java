@@ -7,10 +7,9 @@ package objetos;
 
 import java.util.ArrayList;
 
-public class Admin extends Usuario{
+public class Admin extends UsuarioLogin{
     
-    private final String login;
-    private final String senha;
+    private static int NIVEL_ACESSO = 2;
     
     public Admin(
         int usuarioId, 
@@ -21,27 +20,22 @@ public class Admin extends Usuario{
         ArrayList<Endereco> endereco, 
         ArrayList<Telefone> telefone,
         String login,
-        String senha
+        String senha,
+        int empresaId
     ){
         super(
             usuarioId, 
-            2, 
+            NIVEL_ACESSO, 
             nomeUsuario, 
             cpfCnpj, 
             emails,
             endereco, 
-            telefone
+            telefone,
+            login,
+            senha,
+            empresaId
         );
         
-        this.login = login;
-        this.senha = senha;
     }
     
-    public String getLogin(){
-        return login;
-    }
-    
-    public String getSenha(){
-        return senha;
-    }
 }

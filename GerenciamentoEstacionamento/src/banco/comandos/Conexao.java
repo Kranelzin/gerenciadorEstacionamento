@@ -1,4 +1,4 @@
-package banco;
+package banco.comandos;
 
 import exceptions.BancoException;
 import java.io.FileInputStream;
@@ -49,7 +49,7 @@ public class Conexao{
             conexao.commit();
         }
         catch(SQLException e){
-            rollbackk();
+            rollback();
             throw new BancoException("Erro ao dar commit: " + e.getMessage());
         }
         finally{
@@ -86,7 +86,7 @@ public class Conexao{
     }
     
     private static Properties carregarProperties(){
-        try(FileInputStream arquivo = new FileInputStream("src/main/java/banco/banco.properties")){
+        try(FileInputStream arquivo = new FileInputStream("src/banco/comandos/banco.properties")){
             Properties propriedades = new Properties();
             propriedades.load(arquivo);
             return propriedades;
@@ -106,7 +106,7 @@ public class Conexao{
         }
     }
     
-    private void rollbackk(){
+    private void rollback(){
         try {
             conexao.rollback();
         } catch (SQLException e) {

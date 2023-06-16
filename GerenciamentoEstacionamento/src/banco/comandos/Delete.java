@@ -1,5 +1,6 @@
-package banco;
+package banco.comandos;
 
+import banco.comandos.Conexao;
 import exceptions.BancoIntegridadeException;
 import java.sql.SQLException;
 
@@ -27,6 +28,7 @@ public class Delete extends SqlComandos{
             fecharConexao();
         }
         catch(SQLException e){
+            con.fecharConexao();
             throw new BancoIntegridadeException("Erro ao realizar delete: " + e.getMessage());
         }
     }

@@ -1,5 +1,7 @@
-package banco;
+package banco.comandos;
 
+import banco.comandos.SqlComandos;
+import banco.comandos.Conexao;
 import exceptions.BancoException;
 import java.sql.SQLException;
 
@@ -26,6 +28,7 @@ public class Update extends SqlComandos{
             fecharConexao();
         }
         catch(SQLException e){
+            con.fecharConexao();
             throw new BancoException("Erro ao realizar update: " + e.getMessage());
         }
         

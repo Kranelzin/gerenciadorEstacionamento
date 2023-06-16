@@ -1,6 +1,7 @@
-package banco;
+package banco.comandos;
 
-import banco.Conexao;
+import banco.comandos.InterfaceSql;
+import banco.comandos.Conexao;
 import exceptions.BancoException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -29,8 +30,10 @@ public abstract class SqlComandos implements InterfaceSql{
         setPreparedStatement(0, parametros);
     }
     protected void setPreparedStatement(int generatedKeys, Object... parametros){
-        if(sql == null)
+        if(sql == null){
+            con.fecharConexao();
             throw new BancoException("O sql não foi informado! ");
+        }
         st = con.getStatement(sql, generatedKeys);
 
         try{
@@ -39,6 +42,7 @@ public abstract class SqlComandos implements InterfaceSql{
             }
         }
         catch(SQLException e){
+            con.fecharConexao();
             throw new BancoException("Erro a resgatar statement: " + e.getMessage());
         }
         
@@ -50,6 +54,7 @@ public abstract class SqlComandos implements InterfaceSql{
                 st.close();
         }
         catch(SQLException e){
+            con.fecharConexao();
             throw new BancoException("Erro ao fechar recursos do banco: " + e.getMessage());
         }
     }

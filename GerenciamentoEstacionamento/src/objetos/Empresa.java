@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Empresa {
     private final int empresaId;
     private final String empresaNome;
-    private final int cpfCnpj;
+    private final String cpfCnpj;
     private final ArrayList<String> emails;
     private final ArrayList<Telefone> telfones;
     private final ArrayList<Endereco> enderecos;
@@ -20,7 +20,7 @@ public class Empresa {
     public Empresa(
         int empresaId, 
         String empresaNome, 
-        int cpfCnpj, 
+        String cpfCnpj, 
         ArrayList<String> emails, 
         ArrayList<Telefone> telfones,
         ArrayList<Endereco> enderecos
@@ -41,7 +41,7 @@ public class Empresa {
         return empresaNome;
     }
 
-    public int getCpfCnpj() {
+    public String getCpfCnpj() {
         return cpfCnpj;
     }
 

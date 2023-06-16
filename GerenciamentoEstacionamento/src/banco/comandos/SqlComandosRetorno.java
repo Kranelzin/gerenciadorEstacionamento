@@ -1,7 +1,8 @@
-package banco;
+package banco.comandos;
 
-import banco.SqlComandos;
-import banco.Conexao;
+import banco.comandos.InterfaceSql;
+import banco.comandos.SqlComandos;
+import banco.comandos.Conexao;
 import exceptions.BancoException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -37,6 +38,7 @@ public abstract class SqlComandosRetorno extends SqlComandos implements Interfac
             }
         }
         catch(SQLException e){
+            con.fecharConexao();
             throw new BancoException("Falha ao resgatar dados! " + e.getMessage());
         }
     }
@@ -50,6 +52,7 @@ public abstract class SqlComandosRetorno extends SqlComandos implements Interfac
                 st.close();
         }
         catch(SQLException e){
+            con.fecharConexao();
             throw new BancoException("Erro ao fechar recursos do banco: " + e.getMessage());
         }
     }

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 public class Cliente extends Usuario{
     
+    private static int NIVEL_ACESSO = 0;
     private ArrayList<BoxVaga> boxVagas;
     private boolean mensalista;
     private Mensalidade mensalidade;
@@ -28,16 +29,18 @@ public class Cliente extends Usuario{
         ArrayList<String> emails,
         ArrayList<Endereco> endereco, 
         ArrayList<Telefone> telefone,
-        ArrayList<Veiculo> veiculos
+        ArrayList<Veiculo> veiculos,
+        int empresaId
     ){
         super(
             usuarioId, 
-            0, 
+            NIVEL_ACESSO, 
             nomeUsuario, 
             cpfCnpj, 
             emails,
             endereco, 
-            telefone
+            telefone,
+            empresaId
             );
 
         this.veiculos = veiculos;

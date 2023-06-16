@@ -1,5 +1,6 @@
-package banco;
+package banco.comandos;
 
+import banco.comandos.Conexao;
 import exceptions.BancoException;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -31,6 +32,7 @@ public class Insert extends SqlComandosRetorno{
             fecharConexao();
         }
         catch(SQLException e){
+            con.fecharConexao();
             throw new BancoException("Erro ao realizar insert: " + e.getMessage());
         }
     

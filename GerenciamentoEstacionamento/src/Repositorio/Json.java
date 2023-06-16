@@ -2,6 +2,8 @@ package Repositorio;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import java.util.ArrayList;
 
 public class Json {
     private static Gson novoGson() {
@@ -12,6 +14,15 @@ public class Json {
     public static Object toJson(Object object){
         Gson gson = novoGson();
         return gson.toJson(object);
+    }
+    
+    public static <Generico> Generico toListObjectr(String json){
+        if (json.isEmpty())
+            return null;
+
+        Gson gson = novoGson();
+        return gson.fromJson(json, new TypeToken<ArrayList<Generico>>() {}.getType());
+
     }
     
 }

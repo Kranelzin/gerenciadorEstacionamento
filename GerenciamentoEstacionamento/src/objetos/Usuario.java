@@ -15,6 +15,7 @@ public class Usuario {
     private final ArrayList<String> emails;
     private final ArrayList<Endereco> endereco;
     private final ArrayList<Telefone> telefone;
+    private final int empresaId;
     
     
     public Usuario(
@@ -24,7 +25,8 @@ public class Usuario {
         String cpfCnpj, 
         ArrayList<String> emails,
         ArrayList<Endereco> endereco, 
-        ArrayList<Telefone> telefone
+        ArrayList<Telefone> telefone,
+        int empresaId
     ) {
         this.usuarioId = usuarioId;
         this.tipo = tipo;
@@ -33,6 +35,7 @@ public class Usuario {
         this.emails = emails;
         this.endereco = endereco;
         this.telefone = telefone;
+        this.empresaId = empresaId;
     }
 
     public int getUsuarioId() {
@@ -61,6 +64,11 @@ public class Usuario {
 
     public ArrayList<Telefone> getTelefone() {
         return telefone;
+    }
+    
+    
+    public int getEmpresaId(){
+        return empresaId;
     }
  
 }

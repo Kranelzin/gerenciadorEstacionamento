@@ -7,12 +7,12 @@ package objetos;
 
 public class Telefone {
     private final int numero;
-    private final String tipo; //default 0;  0 = Celular, 1 = Fixo;
+    private final int tipo; //default 0;  0 = Celular, 1 = Fixo;
     private final boolean temWhats;
     
     public Telefone(
         int numero, 
-        String tipo, 
+        int tipo, 
         boolean temWhats
     ) {
         this.numero = numero;
@@ -24,7 +24,7 @@ public class Telefone {
         return numero;
     }
 
-    public String getTipo() {
+    public int getTipo() {
         return tipo;
     }
 

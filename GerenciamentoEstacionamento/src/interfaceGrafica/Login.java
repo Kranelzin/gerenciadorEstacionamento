@@ -4,6 +4,9 @@
  */
 package interfaceGrafica;
 
+import controladores.CtrLogin;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author marce
@@ -91,7 +94,18 @@ public class Login extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEntrarActionPerformed
-         new CadastroCliente().setVisible(true);
+
+        String login = tfLogin.getText().toString().trim();
+        String senha = tfSenha.getText().toString().trim();
+        
+        if(CtrLogin.logarUsuario(login, senha))
+            System.out.println("Avançar proxima tela");
+        else
+            JOptionPane.showMessageDialog(null, "Usuario ou senha inválidos!", "Atenção", JOptionPane.WARNING_MESSAGE);
+        
+        tfLogin.setText("");
+        tfSenha.setText("");
+        
     }//GEN-LAST:event_btEntrarActionPerformed
 
 
