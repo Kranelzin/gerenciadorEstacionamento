@@ -6,6 +6,7 @@ package objetos;
  */
 
 import enums.Meses;
+import enums.TipoUsuario;
 import exceptions.EstacionarVagaException;
 import exceptions.RealizarPagamentoException;
 import java.math.BigDecimal;
@@ -14,7 +15,6 @@ import java.util.ArrayList;
 
 public class Cliente extends Usuario{
     
-    private static int NIVEL_ACESSO = 0;
     private ArrayList<BoxVaga> boxVagas;
     private boolean mensalista;
     private Mensalidade mensalidade;
@@ -23,7 +23,6 @@ public class Cliente extends Usuario{
     
     public Cliente(
         int usuarioId, 
-        int tipo, 
         String nomeUsuario, 
         String cpfCnpj, 
         ArrayList<String> emails,
@@ -34,7 +33,7 @@ public class Cliente extends Usuario{
     ){
         super(
             usuarioId, 
-            NIVEL_ACESSO, 
+            TipoUsuario.CLIENTE, 
             nomeUsuario, 
             cpfCnpj, 
             emails,

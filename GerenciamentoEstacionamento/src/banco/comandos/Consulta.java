@@ -1,5 +1,6 @@
 package banco.comandos;
 
+import Repositorio.Biblioteca;
 import banco.comandos.Conexao;
 import exceptions.BancoException;
 import java.math.BigDecimal;
@@ -48,7 +49,7 @@ public class Consulta extends SqlComandosRetorno{
     }
     
     public boolean getBoolean(String nomeColuna) {
-        return getValor(nomeColuna, boolean.class);
+        return getInt(nomeColuna) == 1;
     }
 
     public String getString(String nomeColuna) {
@@ -70,8 +71,8 @@ public class Consulta extends SqlComandosRetorno{
         try {
             Object valor = dados.get(pos).get(nomeColuna);
             
-            if (valor == null || !tipoDado.isInstance(valor))
-                throw new BancoException("Valor inválido para a coluna: " + nomeColuna);
+            if (valor == null || !Biblioteca.verificarValorValido(tipoDado, valor))
+                throw new BancoException("Tipo de valor ou nome inválido para a coluna: " + nomeColuna);
             
             return tipoDado.cast(valor);
             

@@ -185,13 +185,13 @@ public class RequisicaoHttps {
             else
                 in = con.getInputStream();			        		        	
 
-            String contentEncoding = con.getContentEncoding();
+            String contentEncoding = con.getContentEncoding() == null ? "" : con.getContentEncoding();
 
             if (!contentEncoding.contentEquals("")) {			
                 if (contentEncoding.equalsIgnoreCase("gzip"))
-                        in = new GZIPInputStream(in);
+                    in = new GZIPInputStream(in);
                 else if (contentEncoding.equalsIgnoreCase("deflate"))
-                        in = new InflaterInputStream(in, new Inflater(true));
+                    in = new InflaterInputStream(in, new Inflater(true));
             }
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
@@ -206,8 +206,8 @@ public class RequisicaoHttps {
             else
                 retorno.setDados(response.toString());			
         }
-        catch(Exception e) {
-                retorno.definirErro(e.getMessage());
+        catch(IOException e) {
+            retorno.definirErro(e.getMessage());
         }
 
         return retorno;		
@@ -240,7 +240,7 @@ public class RequisicaoHttps {
         return corpoRequisicao.toString();
     }
 
-    private Boolean parametroExiste(String chave) {
+    private boolean parametroExiste(String chave) {
         for(Parametro parametro: this.parametros) {
             if(parametro.getChave().equals(chave))
                 return true;

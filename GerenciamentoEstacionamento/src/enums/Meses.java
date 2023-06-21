@@ -39,9 +39,8 @@ public enum Meses {
         Meses[] meses = Meses.values();
         
         for (Meses mes : meses) {
-            if (mes.indice == indice) {
+            if (mes.indice == indice) 
                 return mes;
-            }
         }
         throw new IllegalArgumentException("Não foi encontrado um mês com o índice fornecido.");
     }

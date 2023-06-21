@@ -5,11 +5,12 @@ package objetos;
  * @author marce
  */
 
+import enums.TipoUsuario;
 import java.util.ArrayList;
 
 public class Usuario {
     private final int usuarioId;
-    private final int tipo; //default 0;  0 = Cliente, 1 = Funcionario; 2 = Admin;
+    private final TipoUsuario tipo;
     private final String nomeUsuario;
     private final String cpfCnpj;
     private final ArrayList<String> emails;
@@ -20,7 +21,7 @@ public class Usuario {
     
     public Usuario(
         int usuarioId, 
-        int tipo, 
+        TipoUsuario tipo, 
         String nomeUsuario, 
         String cpfCnpj, 
         ArrayList<String> emails,
@@ -42,7 +43,7 @@ public class Usuario {
         return usuarioId;
     }
 
-    public int getTipo() {
+    public TipoUsuario getTipo() {
         return tipo;
     }
 

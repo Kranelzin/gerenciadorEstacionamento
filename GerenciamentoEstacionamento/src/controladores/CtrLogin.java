@@ -1,6 +1,7 @@
 package controladores;
 
 import banco.Logar;
+import banco.comandos.Conexao;
 import objetos.Empresa;
 import objetos.UsuarioLogin;
 
@@ -10,29 +11,29 @@ import objetos.UsuarioLogin;
  */
 public class CtrLogin {
     
-    private static Logar loginUsuario = new Logar();
     private static UsuarioLogin usuarioLogado;
     private static Empresa empresa;
-    private static final int ACESSO_ADMIN = 2;
-    private static final int ACESSO_FUNCIONARIO = 1;
     
     public static boolean logarUsuario(String login, String senha){
+        Conexao con = new Conexao();
+        con.abrirConexao(true);
         
-        boolean retorno = loginUsuario.validarLogin(login, senha);
+        boolean retorno = Logar.validarLogin(con, login, senha);
         
         if(retorno)
-            setUsuarioLogin();
+            setUsuarioLogin(con);
         
+        con.fecharConexao();
         return retorno;
     }
     
-    private static void setUsuarioLogin(){
-        usuarioLogado = loginUsuario.getUsuarioLogin();
+    private static void setUsuarioLogin(Conexao con){
+        usuarioLogado = Logar.getUsuarioLogin(con);
         setEmpresa();
     }
     
     private static void setEmpresa(){
-        empresa = loginUsuario.getEmpresaUsuario();
+        empresa = Logar.getEmpresaUsuario();
     }
     
 }

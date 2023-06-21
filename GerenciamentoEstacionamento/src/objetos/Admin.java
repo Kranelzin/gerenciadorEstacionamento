@@ -5,15 +5,13 @@ package objetos;
  * @author marce
  */
 
+import enums.TipoUsuario;
 import java.util.ArrayList;
 
 public class Admin extends UsuarioLogin{
     
-    private static int NIVEL_ACESSO = 2;
-    
     public Admin(
         int usuarioId, 
-        int tipo, 
         String nomeUsuario, 
         String cpfCnpj, 
         ArrayList<String> emails,
@@ -25,7 +23,7 @@ public class Admin extends UsuarioLogin{
     ){
         super(
             usuarioId, 
-            NIVEL_ACESSO, 
+            TipoUsuario.ADMIN, 
             nomeUsuario, 
             cpfCnpj, 
             emails,

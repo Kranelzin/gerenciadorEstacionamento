@@ -1,18 +1,20 @@
 package objetos;
 
+import enums.TipoTelefone;
+
 /**
  *
  * @author marce
  */
 
 public class Telefone {
-    private final int numero;
-    private final int tipo; //default 0;  0 = Celular, 1 = Fixo;
+    private final String numero;
+    private final TipoTelefone tipo;
     private final boolean temWhats;
     
     public Telefone(
-        int numero, 
-        int tipo, 
+        String numero, 
+        TipoTelefone tipo, 
         boolean temWhats
     ) {
         this.numero = numero;
@@ -20,11 +22,11 @@ public class Telefone {
         this.temWhats = temWhats;
     }
 
-    public int getNumero() {
+    public String getNumero() {
         return numero;
     }
 
-    public int getTipo() {
+    public TipoTelefone getTipo() {
         return tipo;
     }
 

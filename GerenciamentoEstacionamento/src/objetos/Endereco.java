@@ -6,8 +6,11 @@ import Repositorio.RequisicaoHttps;
 import Repositorio.Retorno;
 import banco.comandos.Conexao;
 import banco.comandos.Consulta;
+import enums.Estados;
 import enums.MetodoRequisicao;
 import enums.TipoConteudo;
+import enums.TipoEndereco;
+import exceptions.RequisicaoException;
 import java.io.IOException;
 
 /**
@@ -17,19 +20,19 @@ import java.io.IOException;
 
 public class Endereco {
     
-    private int tipo; //default 0;  0 = Residencial, 1 = Comercial;
+    private TipoEndereco tipo;
     private int cep;
     private String logradouro;
     private int numero;
     private String complemento;
     private String bairro;
     private String cidade;
-    private String uf;
+    private Estados uf;
     
     public Endereco(){};
     
     public Endereco(
-        int tipo,
+        TipoEndereco tipo,
         int numero, 
         String complemento
     ){
@@ -39,14 +42,14 @@ public class Endereco {
     };
     
     public Endereco(
-        int tipo,
+        TipoEndereco tipo,
         int cep, 
         String logradouro, 
         int numero, 
         String complemento, 
         String bairro, 
         String cidade, 
-        String uf
+        Estados uf
     ) {
         this.tipo = tipo;
         this.cep = cep;
@@ -58,7 +61,7 @@ public class Endereco {
         this.uf = uf;
     }
 
-    public int getTipo(){
+    public TipoEndereco getTipo(){
         return tipo;
     }
     
@@ -86,27 +89,35 @@ public class Endereco {
         return cidade;
     }
 
-    public String getUf() {
+    public Estados getUf() {
         return uf;
     }
     
-    public void pesquisarEndereco(int cep) throws IOException{
+    public void pesquisarEndereco(String cep){
     
-        RequisicaoHttps requisicao = new RequisicaoHttps(
-                "viacep.com.br/ws/" + cep + "/json/",
+        try{
+            RequisicaoHttps requisicao = new RequisicaoHttps(
+                "https://viacep.com.br/ws/" + cep + "/json/",
                 MetodoRequisicao.GET,
                 TipoConteudo.RAW
-        );
+            );
+
+            Retorno retorno = requisicao.executarRequisicao();
+
+            if(retorno.isHouveErro())
+                return;
+            
+            RetornoCep retornoCep = Json.toObject(retorno.getDados(), RetornoCep.class);
         
-        Retorno retorno = requisicao.executarRequisicao();
-        
-        RetornoCep retornoCep = Json.toListObjectr(retorno.getDados());
-        
-        this.cep = cep;
-        this.cidade = retornoCep.localidade;
-        this.bairro = retornoCep.bairro;
-        this.uf = retornoCep.uf;
-        this.logradouro = retornoCep.logradouro;
+            this.cep = Integer.parseInt(cep);
+            this.cidade = retornoCep.localidade;
+            this.bairro = retornoCep.bairro;
+            this.uf = Estados.obterPorDescricao(retornoCep.uf);
+            this.logradouro = retornoCep.logradouro;
+        }
+        catch(IOException e){
+            throw new RequisicaoException("Falha ao pesquisar cep: " + e.getMessage());
+        }
     }
     
     public void pesquisarCep(String uf, String cidade, String rua){
@@ -141,9 +152,13 @@ public class Endereco {
             break;
         }
         
-        this.uf = uf;
+        this.uf = Estados.obterPorDescricao(uf);
         this.cidade = cidade;
         this.logradouro = rua;
         
+    }
+
+    public boolean temCep() {
+        return cep != 0;
     }
 }

@@ -16,12 +16,12 @@ public class Json {
         return gson.toJson(object);
     }
     
-    public static <Generico> Generico toListObjectr(String json){
+    public static <Generico> Generico toObject(String json, Class<Generico> Generico){
         if (json.isEmpty())
             return null;
 
         Gson gson = novoGson();
-        return gson.fromJson(json, new TypeToken<ArrayList<Generico>>() {}.getType());
+        return gson.fromJson(json, Generico);
 
     }
     

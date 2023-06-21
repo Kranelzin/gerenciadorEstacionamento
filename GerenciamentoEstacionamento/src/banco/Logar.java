@@ -1,13 +1,14 @@
 package banco;
 
+import Repositorio.Biblioteca;
 import banco.comandos.Conexao;
 import banco.comandos.Consulta;
+import enums.Estados;
+import enums.TipoEndereco;
+import enums.TipoTelefone;
+import enums.TipoUsuario;
 import exceptions.LogarException;
-import exceptions.SenhaException;
 import java.util.ArrayList;
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
 import objetos.Empresa;
 import objetos.Endereco;
 import objetos.Telefone;
@@ -20,43 +21,13 @@ import objetos.UsuarioLogin;
  */
 public class Logar {
     
-    private static final String KEY = "FizzTheTrickster"; //mudar isso dps
-    private static final String ALGORITHM = "AES";
     private static int usuarioId = -1;
     private static int empresaId = -1;
     
-    private static String codificarSenha(String senha){
-        try {
-            SecretKeySpec secretKey = new SecretKeySpec(KEY.getBytes(), ALGORITHM);
-            Cipher cipher = Cipher.getInstance(ALGORITHM);
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-            byte[] encryptedBytes = cipher.doFinal(senha.getBytes());
-            return DatatypeConverter.printBase64Binary(encryptedBytes);
-        } catch (Exception e) {
-            throw new SenhaException("Falha ao codificar senha: " + e.getMessage());
-        }
-    }
-    
-    private static String decodificarSenha(String encryptedPassword){
-        try {
-            SecretKeySpec secretKey = new SecretKeySpec(KEY.getBytes(), ALGORITHM);
-            Cipher cipher = Cipher.getInstance(ALGORITHM);
-            cipher.init(Cipher.DECRYPT_MODE, secretKey);
-            byte[] decryptedBytes = cipher.doFinal(DatatypeConverter.parseBase64Binary(encryptedPassword));
-            return new String(decryptedBytes);
-        } catch (Exception e) {
-            throw new SenhaException("Falha ao decodificar senha: " + e.getMessage());
-        }
-        
-    }
-    
-    public static boolean validarLogin(String login, String senha){
+    public static boolean validarLogin(Conexao con, String login, String senha){
         boolean retorno = false;
         
-        String senhaCodificada = codificarSenha(senha);
-        
-        Conexao con = new Conexao();
-        con.abrirConexao(true);
+        String senhaCodificada = Biblioteca.codificarSenha(senha);
         
         Consulta consulta = con.novaConsulta();
         
@@ -80,15 +51,10 @@ public class Logar {
             retorno = true;
         }
         
-        con.fecharConexao();
-        
         return retorno;
     }
 
-    public UsuarioLogin getUsuarioLogin() {
-        
-        Conexao con = new Conexao();
-        con.abrirConexao(true);
+    public static UsuarioLogin getUsuarioLogin(Conexao con) {
         
         ArrayList<String> emails = buscarEmailsUsuario(con);
         
@@ -104,7 +70,7 @@ public class Logar {
         
     }
 
-    private ArrayList<String> buscarEmailsUsuario(Conexao con) {
+    private static ArrayList<String> buscarEmailsUsuario(Conexao con) {
         
         ArrayList<String> emails = new ArrayList<>();
         
@@ -116,7 +82,7 @@ public class Logar {
         .append("SELECT ")
         .append("  EML.EMAIL ")
                 
-        .append("FROM EMAILS EML ")                
+        .append("FROM EMAIL EML ")                
                 
         .append("INNER JOIN EMAIL_USUARIO EMU ")
         .append("ON EML.EMAIL_ID = EMU.EMAIL_ID ")
@@ -139,7 +105,7 @@ public class Logar {
         
     }
 
-    private ArrayList<Telefone> buscarTelefonesUsuario(Conexao con) {
+    private static ArrayList<Telefone> buscarTelefonesUsuario(Conexao con) {
         ArrayList<Telefone> telefones = new ArrayList<>();
         
         Consulta consulta = con.novaConsulta();
@@ -166,9 +132,10 @@ public class Logar {
         consulta.executarComando(new Object[]{usuarioId});
         
         while(!consulta.fimConsulta()){
+            
             Telefone telefone = new Telefone(
-                consulta.getInt("NUMERO"),
-                consulta.getInt("TIPO"),
+                consulta.getString("NUMERO"),
+                TipoTelefone.obterPorIndice(consulta.getInt("TIPO")),
                 consulta.getBoolean("TEM_WHATS")
             );
             
@@ -179,7 +146,7 @@ public class Logar {
         
     }
 
-    private ArrayList<Endereco> buscarEnderecosUsuario(Conexao con) {
+    private static ArrayList<Endereco> buscarEnderecosUsuario(Conexao con) {
         ArrayList<Endereco> enderecos = new ArrayList<>();
         
         Consulta consulta = con.novaConsulta();
@@ -212,15 +179,16 @@ public class Logar {
         consulta.executarComando(new Object[]{usuarioId});
         
         while(!consulta.fimConsulta()){
+            
             Endereco endereco = new Endereco(
-                consulta.getInt("TIPO"),
+                TipoEndereco.obterPorIndice(consulta.getInt("TIPO")),
                 consulta.getInt("CEP"),
                 consulta.getString("LOGRADOURO"),
                 consulta.getInt("NUMERO"),
                 consulta.getString("COMPLEMENTO"),
                 consulta.getString("BAIRRO"),
                 consulta.getString("CIDADE"),
-                consulta.getString("UF")
+                Estados.obterPorDescricao(consulta.getString("UF"))
             );
             
             enderecos.add(endereco);
@@ -229,7 +197,7 @@ public class Logar {
         return enderecos;
     }
 
-    private UsuarioLogin buscarUsuarioLogado(
+    private static UsuarioLogin buscarUsuarioLogado(
         Conexao con, 
         ArrayList<String> emails, 
         ArrayList<Telefone> telefones, 
@@ -267,7 +235,7 @@ public class Logar {
             
             usuarioLogado = new UsuarioLogin(
                 usuarioId,
-                consulta.getInt("TIPO"),
+                TipoUsuario.obterPorIndice(consulta.getInt("TIPO")),
                 consulta.getString("NOME"),
                 consulta.getString("CPF_CNPJ"),
                 emails,
@@ -282,7 +250,7 @@ public class Logar {
         return usuarioLogado;
     }
 
-    public Empresa getEmpresaUsuario() {
+    public static Empresa getEmpresaUsuario() {
         Conexao con = new Conexao();
         con.abrirConexao(true);
         
@@ -302,7 +270,7 @@ public class Logar {
         return empresa;
     }
 
-    private ArrayList<String> buscarEmailsEmpresa(Conexao con) {
+    private static ArrayList<String> buscarEmailsEmpresa(Conexao con) {
         ArrayList<String> emails = new ArrayList<>();
         
         Consulta consulta = con.novaConsulta();
@@ -335,7 +303,7 @@ public class Logar {
         return emails;
     }
 
-    private ArrayList<Telefone> buscarTelefonesEmpresa(Conexao con) {
+    private static ArrayList<Telefone> buscarTelefonesEmpresa(Conexao con) {
         ArrayList<Telefone> telefones = new ArrayList<>();
         
         Consulta consulta = con.novaConsulta();
@@ -362,9 +330,12 @@ public class Logar {
         consulta.executarComando(new Object[]{empresaId});
         
         while(!consulta.fimConsulta()){
+            
+            TipoTelefone tipo = TipoTelefone.obterPorIndice(consulta.getInt("TIPO"));
+            
             Telefone telefone = new Telefone(
-                consulta.getInt("NUMERO"),
-                consulta.getInt("TIPO"),
+                consulta.getString("NUMERO"),
+                tipo,
                 consulta.getBoolean("TEM_WHATS")
             );
         
@@ -375,7 +346,7 @@ public class Logar {
         
     }
 
-    private ArrayList<Endereco> buscarEnderecosEmpresa(Conexao con) {
+    private static ArrayList<Endereco> buscarEnderecosEmpresa(Conexao con) {
         ArrayList<Endereco> enderecos = new ArrayList<>();
         
         Consulta consulta = con.novaConsulta();
@@ -408,15 +379,16 @@ public class Logar {
         consulta.executarComando(new Object[]{empresaId});
         
         while(!consulta.fimConsulta()){
+            
             Endereco endereco = new Endereco(
-                consulta.getInt("TIPO"),
+                TipoEndereco.obterPorIndice(consulta.getInt("TIPO")),
                 consulta.getInt("CEP"),
                 consulta.getString("LOGRADOURO"),
                 consulta.getInt("NUMERO"),
                 consulta.getString("COMPLEMENTO"),
                 consulta.getString("BAIRRO"),
                 consulta.getString("CIDADE"),
-                consulta.getString("UF")
+                Estados.obterPorDescricao(consulta.getString("UF"))
             );
             
             enderecos.add(endereco);
@@ -425,7 +397,7 @@ public class Logar {
         return enderecos;
     }
 
-    private Empresa buscarEmpresaUsuario(
+    private static Empresa buscarEmpresaUsuario(
         Conexao con, 
         ArrayList<String> emails, 
         ArrayList<Telefone> telefones, 

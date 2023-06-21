@@ -1,5 +1,6 @@
 package objetos;
 
+import enums.TipoUsuario;
 import java.util.ArrayList;
 
 /**
@@ -13,7 +14,7 @@ public class UsuarioLogin extends Usuario{
     
     public UsuarioLogin(
         int usuarioId, 
-        int tipo, 
+        TipoUsuario tipo, 
         String nomeUsuario, 
         String cpfCnpj, 
         ArrayList<String> emails,
@@ -27,7 +28,7 @@ public class UsuarioLogin extends Usuario{
     
         super(
             usuarioId, 
-            2, 
+            tipo, 
             nomeUsuario, 
             cpfCnpj, 
             emails,
