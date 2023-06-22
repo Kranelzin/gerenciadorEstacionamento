@@ -28,7 +28,7 @@ public class Update extends SqlComandos{
             fecharConexao();
         }
         catch(SQLException e){
-            con.fecharConexao();
+            con.rollback();
             throw new BancoException("Erro ao realizar update: " + e.getMessage());
         }
         

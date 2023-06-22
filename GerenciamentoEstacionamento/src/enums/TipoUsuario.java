@@ -6,9 +6,9 @@ package enums;
  */
 public enum TipoUsuario {
     
-    CLIENTE(0, "CLI"),
-    FUNCIONARIO(1, "FUN"),
-    ADMIN(2, "ADM");
+    CLIENTE(0, "Cliente"),
+    FUNCIONARIO(1, "Funcionario"),
+    ADMIN(2, "Admin");
     
 
     private final int indice;

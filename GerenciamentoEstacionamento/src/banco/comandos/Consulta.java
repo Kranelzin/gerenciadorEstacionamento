@@ -26,6 +26,7 @@ public class Consulta extends SqlComandosRetorno{
     
     @Override
     public void executarComando(Object... parametros){
+        dados.clear();
         setPreparedStatement(parametros);
         try{
             rs = st.executeQuery();

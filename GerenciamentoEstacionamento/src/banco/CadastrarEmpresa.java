@@ -12,7 +12,7 @@ import objetos.Telefone;
  */
 public class CadastrarEmpresa {
     
-    public static void inerirNovaEmpresa(
+    public static int inerirNovaEmpresa(
             Conexao con, 
             String nomeRazaoSocial, 
             String cpfCnpj, 
@@ -26,6 +26,7 @@ public class CadastrarEmpresa {
         inserirEnderecos(con, empresaId, enderecos);
         inserirTelefones(con, empresaId, telefones);
 
+        return empresaId;
     }
     
     private static int inerirEmpresa(
@@ -62,12 +63,13 @@ public class CadastrarEmpresa {
         StringBuilder sql = new StringBuilder();
         
         sql
-        .append("INSERT INTO TEELEFONE ( ")
+        .append("INSERT INTO TELEFONE ( ")
         .append("  NUMERO, ")
         .append("  TIPO, ")
         .append("  TEM_WHATS ")
         .append(") ")
         .append("VALUES ( ")
+        .append("  ?, ")
         .append("  ?, ")
         .append("  ? ")
         .append(") ");
@@ -91,7 +93,7 @@ public class CadastrarEmpresa {
         StringBuilder sql = new StringBuilder();
         
         sql
-        .append("INSERT INTO TEELEFONE_EMPRESA ( ")
+        .append("INSERT INTO TELEFONE_EMPRESA ( ")
         .append("  TELEFONE_ID, ")
         .append("  EMPRESA_ID ")
         .append(") ")
@@ -102,11 +104,13 @@ public class CadastrarEmpresa {
     
         insert.setSql(sql.toString());
         
-        insert.executarComando(new Object[]{empresaId, telefoneId});
+        insert.executarComando(new Object[]{telefoneId, empresaId});
         
     }
 
     private static void inserirEmails(Conexao con, int empresaId, ArrayList<String> emails) {
+        int emailId = 0;
+        
         Insert insert = con.novoInsert();
         
         StringBuilder sql = new StringBuilder();
@@ -123,7 +127,8 @@ public class CadastrarEmpresa {
         
         for(String email : emails){
             insert.executarComando(new Object[]{email});
-            int emailId = insert.getRetornoInsert();
+            
+            emailId = insert.getRetornoInsert();
             
             inserirEmailEmpresa(con, empresaId, emailId);
             
@@ -147,7 +152,7 @@ public class CadastrarEmpresa {
     
         insert.setSql(sql.toString());
         
-        insert.executarComando(new Object[]{empresaId, emailId});
+        insert.executarComando(new Object[]{emailId, empresaId});
     }
 
     private static void inserirEnderecos(Conexao con, int empresaId, ArrayList<Endereco> enderecos) {
@@ -159,14 +164,20 @@ public class CadastrarEmpresa {
         .append("INSERT INTO ENDERECO ( ")
         .append("  TIPO, ")
         .append("  CEP, ")
-        .append("  LOUGRADOURO, ")
+        .append("  LOGRADOURO, ")
         .append("  NUMERO, ")
         .append("  COMPLEMENTO, ")
         .append("  BAIRRO, ")
-        .append("  CIDADE, ")
-        .append("  UF ")
+        .append("  CIDADE_ID, ")
+        .append("  ESTADO_ID ")
         .append(") ")
         .append("VALUES ( ")
+        .append("  ?, ")
+        .append("  ?, ")
+        .append("  ?, ")
+        .append("  ?, ")
+        .append("  ?, ")
+        .append("  ?, ")
         .append("  ?, ")
         .append("  ? ")
         .append(") ");
@@ -174,20 +185,19 @@ public class CadastrarEmpresa {
         insert.setSql(sql.toString());
         
         for(Endereco endereco : enderecos){
+            
             insert.executarComando(
-                    new Object[]{
-                        endereco.getTipo().getIndice(), 
-                        endereco.getCep(), 
-                        endereco.getLogradouro(),
-                        endereco.getNumero(),
-                        endereco.getComplemento(),
-                        endereco.getBairro(),
-                        endereco.getCidade(),
-                        endereco.getUf()
-                    }
+                new Object[]{
+                    endereco.getTipo().getIndice(), 
+                    endereco.getCep(), 
+                    endereco.getLogradouro(),
+                    endereco.getNumero(),
+                    endereco.getComplemento(),
+                    endereco.getBairro(),
+                    endereco.getCidadeEstado().getCidadeId(),
+                    endereco.getCidadeEstado().getEstado().getIndice()
+                }
             );
-            
-            
             
             int enderecoId = insert.getRetornoInsert();
             
@@ -213,6 +223,6 @@ public class CadastrarEmpresa {
     
         insert.setSql(sql.toString());
         
-        insert.executarComando(new Object[]{empresaId, enderecoId});
+        insert.executarComando(new Object[]{enderecoId, empresaId});
     }
 }

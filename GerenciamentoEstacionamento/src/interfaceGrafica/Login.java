@@ -4,6 +4,7 @@ import Repositorio.Biblioteca;
 import controladores.CtrLogin;
 import enums.TipoCadastro;
 import interfaceGrafica.cadastros.CadastroInfoBasica;
+import java.util.Arrays;
 
 /**
  *
@@ -106,18 +107,16 @@ public class Login extends javax.swing.JFrame {
     private void btEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEntrarActionPerformed
 
         String login = tfLogin.getText().trim();
-        String senha = tfSenha.getPassword().toString();
+        String senha = new String(tfSenha.getPassword());
         
         if(CtrLogin.logarUsuario(login, senha)){
             setVisible(false);
-            repaint();
             Menu menu = new Menu();
             menu.setVisible(true);
         }
         else
             Biblioteca.exibirAlerta("Usuario ou senha inválidos!");
         
-        tfLogin.setText("");
         tfSenha.setText("");
         
     }//GEN-LAST:event_btEntrarActionPerformed

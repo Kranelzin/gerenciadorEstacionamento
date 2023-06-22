@@ -5,33 +5,34 @@ package enums;
  * @author marce
  */
 public enum Estados {
-    AC(0, "AC"),
-    AL(1, "AL"),
-    AP(2, "AP"),
+    
+    AC(1, "AC"),
+    AL(2, "AL"),
     AM(3, "AM"),
-    BA(4, "BA"),
-    CE(5, "CE"),
-    DF(6, "DF"),
-    ES(7, "ES"),
-    GO(8, "GO"),
-    MA(9, "MA"),
-    MT(10, "MT"),
-    MS(11, "MS"),
-    MG(12, "MG"),
-    PA(13, "PA"),
-    PB(14, "PB"),
-    PR(15, "PR"),
+    AP(4, "AP"),
+    BA(5, "BA"),
+    CE(6, "CE"),
+    DF(7, "DF"),
+    ES(8, "ES"),
+    GO(9, "GO"),
+    MA(10, "MA"),
+    MG(11, "MG"),
+    MS(12, "MS"),
+    MT(13, "MT"),
+    PA(14, "PA"),
+    PB(15, "PB"),
     PE(16, "PE"),
     PI(17, "PI"),
-    RJ(18, "RJ"),
-    RN(19, "RN"),
-    RS(20, "RS"),
+    PR(18, "PR"),  
+    RJ(19, "RJ"),
+    RN(20, "RN"),
     RO(21, "RO"),
     RR(22, "RR"),
-    SC(23, "SC"),
-    SP(24, "SP"),
+    RS(23, "RS"),
+    SC(24, "SC"),
     SE(25, "SE"),
-    TO(26, "TO");
+    SP(26, "SP"), 
+    TO(27, "TO");
 
     public static boolean existeEstado(String uf) {
         try{
@@ -52,7 +53,7 @@ public enum Estados {
         this.uf = uf;
     }
 
-    public int getIndex() {
+    public int getIndice() {
         return indice;
     }
 

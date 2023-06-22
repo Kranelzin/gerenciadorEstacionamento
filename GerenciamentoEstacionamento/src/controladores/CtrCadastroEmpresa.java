@@ -40,16 +40,9 @@ public class CtrCadastroEmpresa {
         Conexao con = new Conexao();
         con.abrirConexao();
         
-        CadastrarEmpresa.inerirNovaEmpresa(con, nomeRazaoSocial, cpfCnpj, emails, enderecos, telefones);
-        
+        int empresaId  = CadastrarEmpresa.inerirNovaEmpresa(con, nomeRazaoSocial, cpfCnpj, emails, enderecos, telefones);
+        CtrCadastroAdmin.cadastrarNovoAdmin(con, empresaId);
         con.fecharConexao();
-    }
-
-    public static Endereco buscarCep(String cep) {
-        Endereco endereco = new Endereco();
-        endereco.pesquisarEndereco(cep);
-
-        return endereco;
     }
     
 }

@@ -85,16 +85,13 @@ public class Biblioteca {
         JOptionPane.showMessageDialog(null, mensagem, titulo, JOptionPane.WARNING_MESSAGE);
     }
 
-    public static boolean possivelConverterInt(String texto) {
-        boolean retorno = true;
-        try{
-            Integer.parseInt(texto);
-        }
-        catch(Exception e){
-            retorno = false;
+    public static boolean somenteNumeros(String texto) {
+        
+        for(char c : texto.toCharArray()){
+            if(!Character.isDigit(c))        
+                return false;
         }
         
-        return retorno;
-
+        return true;
     }
 }

@@ -9,6 +9,7 @@ import enums.TipoTelefone;
 import enums.TipoUsuario;
 import exceptions.LogarException;
 import java.util.ArrayList;
+import objetos.CidadeEstado;
 import objetos.Empresa;
 import objetos.Endereco;
 import objetos.Telefone;
@@ -161,10 +162,18 @@ public class Logar {
         .append("  END.NUMERO, ")
         .append("  END.COMPLEMENTO, ")
         .append("  END.BAIRRO, ")
-        .append("  END.CIDADE, ")
-        .append("  END.UF ")
+        .append("  CID.CIDADE_ID, ")
+        .append("  CID.NOME, ")
+        .append("  CID.IBGE, ")
+        .append("  CID.ESTADO_ID ")
                 
-        .append("FROM ENDERECO END ")                
+        .append("FROM ENDERECO END ")    
+                
+        .append("INNER JOIN CIDADE CID ")
+        .append("ON END.CIDADE_ID = CID.CIDADE_ID ")
+                
+        .append("INNER JOIN ESTADO EST ")
+        .append("ON CID.ESTADO_ID = EST.ESTADO_ID ")
 
         .append("INNER JOIN ENDERECO_USUARIO ENU ")
         .append("ON END.ENDERECO_ID = ENU.ENDERECO_ID ")
@@ -180,6 +189,13 @@ public class Logar {
         
         while(!consulta.fimConsulta()){
             
+            CidadeEstado cidadeEstado = new CidadeEstado(
+                consulta.getInt("CIDADE_ID"),
+                consulta.getString("IBGE"),
+                consulta.getString("NOME"),
+                Estados.obterPorIndice(consulta.getInt("ESTADO_ID"))
+            );
+            
             Endereco endereco = new Endereco(
                 TipoEndereco.obterPorIndice(consulta.getInt("TIPO")),
                 consulta.getInt("CEP"),
@@ -187,8 +203,7 @@ public class Logar {
                 consulta.getInt("NUMERO"),
                 consulta.getString("COMPLEMENTO"),
                 consulta.getString("BAIRRO"),
-                consulta.getString("CIDADE"),
-                Estados.obterPorDescricao(consulta.getString("UF"))
+                cidadeEstado
             );
             
             enderecos.add(endereco);
@@ -281,10 +296,10 @@ public class Logar {
         .append("SELECT ")
         .append("  EML.EMAIL ")
                 
-        .append("FROM EMAILS EML ")                
+        .append("FROM EMAIL EML ")                
                 
         .append("INNER JOIN EMAIL_EMPRESA EME ")
-        .append("ON EML.EMAIL_ID = EMU.EMAIL_ID ")
+        .append("ON EML.EMAIL_ID = EME.EMAIL_ID ")
         
         .append("INNER JOIN EMPRESA EMP ")
         .append("ON EME.EMPRESA_ID = EMP.EMPRESA_ID ")
@@ -361,10 +376,18 @@ public class Logar {
         .append("  END.NUMERO, ")
         .append("  END.COMPLEMENTO, ")
         .append("  END.BAIRRO, ")
-        .append("  END.CIDADE, ")
-        .append("  END.UF ")
+        .append("  CID.CIDADE_ID, ")
+        .append("  CID.NOME, ")
+        .append("  CID.IBGE, ")
+        .append("  CID.ESTADO_ID ")
                 
-        .append("FROM ENDERECO END ")                
+        .append("FROM ENDERECO END ")    
+                
+        .append("INNER JOIN CIDADE CID ")
+        .append("ON END.CIDADE_ID = CID.CIDADE_ID ")
+                
+        .append("INNER JOIN ESTADO EST ")
+        .append("ON CID.ESTADO_ID = EST.ESTADO_ID ")          
 
         .append("INNER JOIN ENDERECO_EMPRESA ENE ")
         .append("ON END.ENDERECO_ID = ENE.ENDERECO_ID ")
@@ -380,6 +403,13 @@ public class Logar {
         
         while(!consulta.fimConsulta()){
             
+            CidadeEstado cidadeEstado = new CidadeEstado(
+                consulta.getInt("CIDADE_ID"),
+                consulta.getString("IBGE"),
+                consulta.getString("NOME"),
+                Estados.obterPorIndice(consulta.getInt("ESTADO_ID"))
+            );
+            
             Endereco endereco = new Endereco(
                 TipoEndereco.obterPorIndice(consulta.getInt("TIPO")),
                 consulta.getInt("CEP"),
@@ -387,8 +417,7 @@ public class Logar {
                 consulta.getInt("NUMERO"),
                 consulta.getString("COMPLEMENTO"),
                 consulta.getString("BAIRRO"),
-                consulta.getString("CIDADE"),
-                Estados.obterPorDescricao(consulta.getString("UF"))
+                cidadeEstado
             );
             
             enderecos.add(endereco);

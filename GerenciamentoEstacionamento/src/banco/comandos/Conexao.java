@@ -31,7 +31,7 @@ public class Conexao{
                 Properties propriedades = carregarProperties();
                 String url = propriedades.getProperty("url");
                 conexao = DriverManager.getConnection(url, propriedades);
-                if(somenteConsulta)
+                if(!somenteConsulta)
                     conexao.setAutoCommit(false);
             } catch (SQLException e) {
                 throw new BancoException("Erro ao conectar no banco: " + e.getMessage());
@@ -106,7 +106,7 @@ public class Conexao{
         }
     }
     
-    private void rollback(){
+    protected void rollback(){
         try {
             conexao.rollback();
         } catch (SQLException e) {

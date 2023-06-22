@@ -2,6 +2,7 @@ package banco.comandos;
 
 import banco.comandos.Conexao;
 import exceptions.BancoException;
+import java.math.BigInteger;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -22,6 +23,7 @@ public class Insert extends SqlComandosRetorno{
     
     @Override
     public void executarComando(Object... parametros){
+        dados.clear();
         setPreparedStatement(Statement.RETURN_GENERATED_KEYS, parametros);
         try{
             linhasAfetadas = st.executeUpdate();
@@ -32,7 +34,7 @@ public class Insert extends SqlComandosRetorno{
             fecharConexao();
         }
         catch(SQLException e){
-            con.fecharConexao();
+            con.rollback();
             throw new BancoException("Erro ao realizar insert: " + e.getMessage());
         }
     
@@ -42,7 +44,8 @@ public class Insert extends SqlComandosRetorno{
         return getRetornoInsert(0);
     }
     public int getRetornoInsert(int linha){
-        return (int) dados.get(linha).get("GENERATED_KEY");
+        BigInteger bigInt = (BigInteger) dados.get(linha).get("GENERATED_KEY");
+        return bigInt.intValue();
     }
    
 }

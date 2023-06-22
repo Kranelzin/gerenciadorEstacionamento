@@ -31,19 +31,19 @@ public abstract class SqlComandos implements InterfaceSql{
     }
     protected void setPreparedStatement(int generatedKeys, Object... parametros){
         if(sql == null){
-            con.fecharConexao();
+            con.rollback();
             throw new BancoException("O sql não foi informado! ");
         }
+        
         st = con.getStatement(sql, generatedKeys);
 
         try{
-            for (int i = 0; i < parametros.length; i++) {
-                st.setObject(i + 1, parametros[i]);
-            }
+            for (int i = 0; i < parametros.length; i++)
+                st.setObject(i+1, parametros[i]);
         }
         catch(SQLException e){
-            con.fecharConexao();
-            throw new BancoException("Erro a resgatar statement: " + e.getMessage());
+            con.rollback();
+            throw new BancoException("Erro a resgatar statement, numero errado de parametros: " + e.getMessage());
         }
         
     }
@@ -54,7 +54,7 @@ public abstract class SqlComandos implements InterfaceSql{
                 st.close();
         }
         catch(SQLException e){
-            con.fecharConexao();
+            con.rollback();
             throw new BancoException("Erro ao fechar recursos do banco: " + e.getMessage());
         }
     }

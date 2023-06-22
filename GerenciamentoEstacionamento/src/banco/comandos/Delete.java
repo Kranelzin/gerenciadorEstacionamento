@@ -28,7 +28,7 @@ public class Delete extends SqlComandos{
             fecharConexao();
         }
         catch(SQLException e){
-            con.fecharConexao();
+            con.rollback();
             throw new BancoIntegridadeException("Erro ao realizar delete: " + e.getMessage());
         }
     }

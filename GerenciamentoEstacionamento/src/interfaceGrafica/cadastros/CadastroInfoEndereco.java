@@ -1,14 +1,17 @@
 package interfaceGrafica.cadastros;
 
 import Repositorio.Biblioteca;
+import banco.BuscarEndereco;
 import controladores.CtrCadastroAdmin;
 import controladores.CtrCadastroEmpresa;
 import enums.Estados;
 import enums.TipoCadastro;
 import enums.TipoEndereco;
+import interfaceGrafica.Login;
 import java.util.ArrayList;
 import javax.swing.SpinnerListModel;
 import objetos.Endereco;
+import objetos.CidadeEstado;
 
 /**
  *
@@ -24,8 +27,60 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
         initComponents();
         configurarSpinnerUf();
         rbResidencial.setSelected(true);
+        lbUltimoEndereco.setVisible(false);
         setLocationRelativeTo(null);
         lbTitulo.setText("Cadastro " + tipoCadastro.getDescricao());
+    }
+    
+    private void adicionarEndereco(){
+        
+        String logradouro =  tfLogradouro.getText();
+        String numero = tfNumero.getText();
+        String complemento =  tfComplemento.getText();
+        String bairro = tfBairro.getText();
+        String cidade = tfCidade.getText();
+        
+        if(Biblioteca.verificarCamposVazios(
+                logradouro,
+                numero,
+                complemento,
+                bairro,
+                cidade
+        )){
+            Biblioteca.exibirAlerta("Preencha todos os campos");
+            return;
+        }
+            
+        
+        TipoEndereco tipoEndereco = rbResidencial.isSelected() ? TipoEndereco.RESIDENCIAL : TipoEndereco.COMERCIAL;
+        
+        Estados tipoEstado = null;
+        
+        if(Biblioteca.verificarValorValido(String.class, spEstado.getValue()) && Estados.existeEstado((String) spEstado.getValue()))
+            tipoEstado = Estados.obterPorDescricao((String) spEstado.getValue());
+        else{
+            Biblioteca.exibirAlerta("O estado selecionado é inválido");
+            return;
+        }
+        
+        CidadeEstado cidadeEstado = BuscarEndereco.buscarCidadeEstado(cidade, tipoEstado.getUF());
+        
+        if(cidadeEstado == null){
+            Biblioteca.exibirAlerta("Cidade não encontrada para o estado selecionado");
+            return;
+        }
+        
+        Endereco endereco = new Endereco(
+            tipoEndereco,
+            Integer.parseInt(tfCep.getText()),
+            logradouro,
+            Integer.parseInt(numero),
+            complemento,
+            bairro,
+            cidadeEstado
+        );
+        
+        enderecos.add(endereco);
     }
 
     @SuppressWarnings("unchecked")
@@ -49,11 +104,12 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         spEstado = new javax.swing.JSpinner();
         jLabel8 = new javax.swing.JLabel();
-        jButton3 = new javax.swing.JButton();
+        btEndereco = new javax.swing.JButton();
         tfLogradouro = new javax.swing.JTextField();
         rbComercial = new javax.swing.JRadioButton();
         rbResidencial = new javax.swing.JRadioButton();
         jLabel4 = new javax.swing.JLabel();
+        lbUltimoEndereco = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -90,11 +146,11 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
 
         jLabel8.setText("UF");
 
-        jButton3.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        jButton3.setText("+");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btEndereco.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        btEndereco.setText("+");
+        btEndereco.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btEnderecoActionPerformed(evt);
             }
         });
 
@@ -112,24 +168,36 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
 
         jLabel4.setText("Tipo");
 
+        lbUltimoEndereco.setText("jLabel9");
+        lbUltimoEndereco.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbUltimoEnderecoMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(243, 243, 243)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btProximo)
-                        .addGap(31, 31, 31))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(75, 75, 75)
-                        .addComponent(jLabel15)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addGap(206, 293, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lbTitulo)
+                .addGap(268, 268, 268))
             .addGroup(layout.createSequentialGroup()
                 .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lbUltimoEndereco)
+                        .addGap(174, 174, 174)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(btProximo)
+                                .addGap(31, 31, 31))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(75, 75, 75)
+                                .addComponent(jLabel15)
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(206, 293, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
@@ -166,12 +234,8 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
                                     .addComponent(tfBairro)
                                     .addComponent(tfComplemento))
                                 .addGap(4, 4, 4)
-                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(btEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addContainerGap())))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lbTitulo)
-                .addGap(268, 268, 268))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -214,27 +278,32 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(spEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel8)
-                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(btEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(rbComercial)
                             .addComponent(rbResidencial)
                             .addComponent(jLabel4))
-                        .addContainerGap(77, Short.MAX_VALUE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lbUltimoEndereco)
+                        .addContainerGap(49, Short.MAX_VALUE))))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    private void btEnderecoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEnderecoActionPerformed
+        
+        adicionarEndereco();
+        limparCampos();
+        lbUltimoEndereco.setText(enderecos.get(enderecos.size() - 1).getLogradouro() + " X ");
+        lbUltimoEndereco.setVisible(true);
+    }//GEN-LAST:event_btEnderecoActionPerformed
 
     private void tfCepFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfCepFocusLost
         String cep = tfCep.getText();
-        Endereco endereco = new Endereco();
         
-        endereco = CtrCadastroEmpresa.buscarCep(cep);
+        Endereco endereco = BuscarEndereco.pesquisarEndereco(cep);
             
         if(!endereco.temCep()){
             Biblioteca.exibirAlerta("Cep não encontrado");
@@ -243,46 +312,38 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
         
         tfLogradouro.setText(endereco.getLogradouro());
         tfBairro.setText(endereco.getBairro());
-        tfCidade.setText(endereco.getCidade());
-        spEstado.setValue(endereco.getUf().toString());
+        tfCidade.setText(endereco.getCidadeEstado().getCidade());
+        spEstado.setValue(endereco.getCidadeEstado().getEstado().getUF());
     }//GEN-LAST:event_tfCepFocusLost
 
     private void btProximoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btProximoActionPerformed
         
-        TipoEndereco tipoEndereco = rbResidencial.isSelected() ? TipoEndereco.RESIDENCIAL : TipoEndereco.COMERCIAL;
-        
-        Estados tipoEstado = null;
-        
-        if(Biblioteca.verificarValorValido(String.class, spEstado.getValue()) && Estados.existeEstado((String) spEstado.getValue()))
-            tipoEstado = Estados.obterPorDescricao((String) spEstado.getValue());
-        else{
-            Biblioteca.exibirAlerta("O estado selecionado é inválido");
-            return;
-        }
-        
-        
-        Endereco endereco = new Endereco(
-            tipoEndereco,
-            Integer.parseInt(tfCep.getText()),
-            tfLogradouro.getText(),
-            Integer.parseInt(tfNumero.getText()),
-            tfComplemento.getText(),
-            tfBairro.getText(),
-            tfCidade.getText(),
-            tipoEstado
-        );
-        
-        enderecos.add(endereco);
+        adicionarEndereco();
         
         switch (tipoCadastro) {
             case EMPRESA:
-                CtrCadastroEmpresa.cadastroInfoEndereco(enderecos);
-                setVisible(false);
-                CadastroInfoBasica cadastroAdmin = new CadastroInfoBasica(TipoCadastro.ADMIN);
-                cadastroAdmin.setVisible(true);
+                try{
+                    CtrCadastroEmpresa.cadastroInfoEndereco(enderecos);
+                    setVisible(false);
+                    CadastroInfoBasica cadastroAdmin = new CadastroInfoBasica(TipoCadastro.ADMIN);
+                    cadastroAdmin.setVisible(true);
+                }
+                catch(Exception e){
+                    Biblioteca.exibirAlerta("Erro ao cadastrar empresa: " + e.getMessage());
+                }
                 break;
             case ADMIN:
-                CtrCadastroAdmin.cadastroInfoEndereco(enderecos);
+                try{
+                    CtrCadastroAdmin.cadastroInfoEndereco(enderecos);
+                    CtrCadastroEmpresa.cadastrarNovaEmpresa();
+
+                    setVisible(false);
+                    Login login = new Login();
+                    login.setVisible(true);
+                }
+                catch(Exception e){
+                    Biblioteca.exibirAlerta("Erro ao cadastrar admin: " + e.getMessage());
+                }
                 break;
             case FUNCIONARIO:
                 System.out.println("Cadastro de Funcionário");
@@ -300,10 +361,23 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_rbComercialActionPerformed
 
+    private void lbUltimoEnderecoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbUltimoEnderecoMouseClicked
+         int ultimaPos = enderecos.size() - 1;
+        
+        enderecos.remove(ultimaPos);
+        
+        if(enderecos.size() == 0){
+            lbUltimoEndereco.setVisible(false);
+            return;
+        }
+        
+        lbUltimoEndereco.setText(enderecos.get(ultimaPos - 1).getLogradouro()+ " X ");
+    }//GEN-LAST:event_lbUltimoEnderecoMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btEndereco;
     private javax.swing.JButton btProximo;
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
@@ -314,6 +388,7 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel lbTitulo;
+    private javax.swing.JLabel lbUltimoEndereco;
     private javax.swing.JRadioButton rbComercial;
     private javax.swing.JRadioButton rbResidencial;
     private javax.swing.JSpinner spEstado;
@@ -328,9 +403,20 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
     private void configurarSpinnerUf() {
         ArrayList<String> ufs = new ArrayList<>();
         
-        for(int i =0; i < 27; i++)
+        for(int i =1; i < 28; i++)
             ufs.add(Estados.obterPorIndice(i).getUF());
         
         spEstado.setModel(new SpinnerListModel(ufs));
+    }
+
+    private void limparCampos() {
+        tfCep.setText("");
+        tfLogradouro.setText("");
+        tfNumero.setText("");
+        tfComplemento.setText("");
+        tfBairro.setText("");
+        tfCidade.setText("");
+        spEstado.setValue(Estados.AC.getUF());
+        
     }
 }
