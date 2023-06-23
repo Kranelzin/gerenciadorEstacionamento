@@ -1,0 +1,50 @@
+@startuml
+class enums.Meses
+class exceptions.EstacionarVagaException
+class exceptions.RealizarPagamentoException
+class java.math.BigDecimal
+class java.sql.Timestamp
+class java.util.ArrayList
+class java.util.Calendar
+class java.util.GregorianCalendar
+class objetos.Admin
+class objetos.BoxVaga
+class objetos.Cliente
+class objetos.Empresa
+class objetos.Endereco
+class objetos.Funcionario
+class objetos.Mensalidade
+class objetos.Pagamento
+class objetos.PagamentoMensalidade
+class objetos.Telefone
+class objetos.Usuario
+class objetos.Veiculo
+objetos.Admin ..> java.util.ArrayList
+objetos.Admin --|> objetos.Usuario
+objetos.BoxVaga ..> exceptions.EstacionarVagaException
+objetos.BoxVaga ..> java.sql.Timestamp
+objetos.Cliente ..> enums.Meses
+objetos.Cliente ..> exceptions.EstacionarVagaException
+objetos.Cliente ..> exceptions.RealizarPagamentoException
+objetos.Cliente ..> java.math.BigDecimal
+objetos.Cliente ..> java.sql.Timestamp
+objetos.Cliente ..> java.util.ArrayList
+objetos.Cliente --|> objetos.Usuario
+objetos.Empresa ..> java.util.ArrayList
+objetos.Funcionario ..> java.util.ArrayList
+objetos.Funcionario --|> objetos.Usuario
+objetos.Mensalidade ..> enums.Meses
+objetos.Mensalidade ..> exceptions.RealizarPagamentoException
+objetos.Mensalidade ..> java.math.BigDecimal
+objetos.Mensalidade ..> java.sql.Timestamp
+objetos.Mensalidade ..> java.util.ArrayList
+objetos.Mensalidade ..> java.util.Calendar
+objetos.Mensalidade ..> java.util.GregorianCalendar
+objetos.Pagamento ..> java.math.BigDecimal
+objetos.Pagamento ..> java.sql.Timestamp
+objetos.PagamentoMensalidade ..> enums.Meses
+objetos.PagamentoMensalidade ..> java.math.BigDecimal
+objetos.PagamentoMensalidade ..> java.sql.Timestamp
+objetos.PagamentoMensalidade --|> objetos.Pagamento
+objetos.Usuario ..> java.util.ArrayList
+@enduml
