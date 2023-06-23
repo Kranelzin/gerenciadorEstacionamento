@@ -41,7 +41,7 @@ public class CtrCadastroEmpresa {
         con.abrirConexao();
         
         int empresaId  = CadastrarEmpresa.inerirNovaEmpresa(con, nomeRazaoSocial, cpfCnpj, emails, enderecos, telefones);
-        CtrCadastroAdmin.cadastrarNovoAdmin(con, empresaId);
+        CtrCadastroUsuario.cadastrarNovoUsuario(con, empresaId);
         con.fecharConexao();
     }
     

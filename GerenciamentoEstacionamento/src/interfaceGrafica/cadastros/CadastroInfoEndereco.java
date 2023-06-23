@@ -2,7 +2,7 @@ package interfaceGrafica.cadastros;
 
 import Repositorio.Biblioteca;
 import banco.BuscarEndereco;
-import controladores.CtrCadastroAdmin;
+import controladores.CtrCadastroUsuario;
 import controladores.CtrCadastroEmpresa;
 import enums.Estados;
 import enums.TipoCadastro;
@@ -21,9 +21,11 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
 
     private TipoCadastro tipoCadastro;
     private ArrayList<Endereco> enderecos = new ArrayList<>();
+    private boolean cadastrarEmpresa = false;
     
-    public CadastroInfoEndereco(TipoCadastro tipoCadastro) {
+    public CadastroInfoEndereco(TipoCadastro tipoCadastro, boolean cadastrarEmpresa) {
         this.tipoCadastro = tipoCadastro;
+        this.cadastrarEmpresa = cadastrarEmpresa;
         initComponents();
         configurarSpinnerUf();
         rbResidencial.setSelected(true);
@@ -325,8 +327,9 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
                 try{
                     CtrCadastroEmpresa.cadastroInfoEndereco(enderecos);
                     setVisible(false);
-                    CadastroInfoBasica cadastroAdmin = new CadastroInfoBasica(TipoCadastro.ADMIN);
-                    cadastroAdmin.setVisible(true);
+                    CadastroInfoBasica cadastro = new CadastroInfoBasica(TipoCadastro.ADMIN, true);
+                    cadastro.setVisible(true);
+
                 }
                 catch(Exception e){
                     Biblioteca.exibirAlerta("Erro ao cadastrar empresa: " + e.getMessage());
@@ -334,19 +337,27 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
                 break;
             case ADMIN:
                 try{
-                    CtrCadastroAdmin.cadastroInfoEndereco(enderecos);
-                    CtrCadastroEmpresa.cadastrarNovaEmpresa();
-
+                    CtrCadastroUsuario.cadastroInfoEndereco(enderecos);
                     setVisible(false);
                     Login login = new Login();
                     login.setVisible(true);
+                    
+                    if(cadastrarEmpresa)
+                        CtrCadastroEmpresa.cadastrarNovaEmpresa();
+                    else
+                        CtrCadastroUsuario.cadastrarNovoUsuario();
                 }
                 catch(Exception e){
                     Biblioteca.exibirAlerta("Erro ao cadastrar admin: " + e.getMessage());
                 }
                 break;
             case FUNCIONARIO:
-                System.out.println("Cadastro de Funcionário");
+                try{
+                    CtrCadastroUsuario.cadastrarNovoUsuario();
+                }
+                catch(Exception e){
+                    Biblioteca.exibirAlerta("Erro ao cadastrar Funcionario: " + e.getMessage());
+                }
                 break;
             case CLIENTE:
                 System.out.println("Cadastro de Cliente");

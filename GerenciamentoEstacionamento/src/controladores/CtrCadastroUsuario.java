@@ -11,7 +11,7 @@ import objetos.Telefone;
  *
  * @author marce
  */
-public class CtrCadastroAdmin {
+public class CtrCadastroUsuario {
     
     private static String login;
     private static String senha;
@@ -44,9 +44,19 @@ public class CtrCadastroAdmin {
         enderecos = cadastroEnderecos;
     }
    
-    public static void cadastrarNovoAdmin(Conexao con, int empresaId){
+    public static void cadastrarNovoUsuario(Conexao con, int empresaId){
  
-        CadastrarUsuario.inerirNovoUsuario(con,empresaId, login, senha, tipoUsuario, nome, cpfCnpj, emails, enderecos, telefones);
+        CadastrarUsuario.inerirNovoUsuario(con, empresaId, login, senha, tipoUsuario, nome, cpfCnpj, emails, enderecos, telefones);
+        
+    }
+    
+    public static void cadastrarNovoUsuario(){
+        Conexao con = new Conexao();
+        con.abrirConexao();
+        
+        int empresaId = CtrLogin.getEmpresa().getEmpresaId();
+        
+        CadastrarUsuario.inerirNovoUsuario(con, empresaId, login, senha, tipoUsuario, nome, cpfCnpj, emails, enderecos, telefones);
         
     }
     

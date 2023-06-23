@@ -34,7 +34,7 @@ public enum TipoUsuario {
             if (usuario.indice == indice)
                 return usuario;
         }
-        throw new IllegalArgumentException("Não foi encontrado nenhum tipo de telefone com o índice fornecido.");
+        throw new IllegalArgumentException("Não foi encontrado nenhum usuario com o índice fornecido.");
     }
 
 }

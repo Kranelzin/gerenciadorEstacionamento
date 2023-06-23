@@ -1,13 +1,12 @@
 package interfaceGrafica.cadastros;
 
 import Repositorio.Biblioteca;
-import controladores.CtrCadastroAdmin;
+import controladores.CtrCadastroUsuario;
 import controladores.CtrCadastroEmpresa;
 import enums.TipoCadastro;
 import enums.TipoTelefone;
 import enums.TipoUsuario;
 import java.util.ArrayList;
-import java.util.Arrays;
 import objetos.Telefone;
 
 /**
@@ -19,6 +18,28 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
     private TipoCadastro tipoCadastro;
     private ArrayList<String> emails = new ArrayList<>();
     private ArrayList<Telefone> telefones = new ArrayList<>();
+    private boolean cadastrarEmpresa = false;
+    
+     public CadastroInfoBasica(TipoCadastro tipoCadastro, boolean cadastrarEmpresa){
+        this.tipoCadastro = tipoCadastro;
+        this.cadastrarEmpresa = cadastrarEmpresa;
+        initComponents();
+        rbMovel.setSelected(true);
+        setLocationRelativeTo(null);
+        lbTitulo.setText("Cadastro " + tipoCadastro.getDescricao());
+        lbUltimoEmail.setVisible(false);
+        lbUltimoTelefone.setVisible(false);
+        
+        if(tipoCadastro == TipoCadastro.EMPRESA){
+            lbLogin.setVisible(false);
+            lbSenha.setVisible(false);
+            lbSenhaRepetida.setVisible(false);
+            tfLogin.setVisible(false);
+            tfSenha.setVisible(false);
+            tfSenhaRepetida.setVisible(false);
+            
+        }
+     }
     
     public CadastroInfoBasica(TipoCadastro tipoCadastro) {
         this.tipoCadastro = tipoCadastro;
@@ -53,28 +74,29 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
         );
         
         setVisible(false);
-        CadastroInfoEndereco cadastroEmpresa = new CadastroInfoEndereco(TipoCadastro.EMPRESA);
+        CadastroInfoEndereco cadastroEmpresa = new CadastroInfoEndereco(TipoCadastro.EMPRESA, cadastrarEmpresa);
         cadastroEmpresa.setVisible(true);
     
     }
     
-    private void cadastroAdmin(){
+    private void cadastroUsuario(TipoUsuario tipoUsuario){
         
         if(!cadastrarInformacoes(true))
             return;
         
-        CtrCadastroAdmin.cadastroInfoBasica(
+        CtrCadastroUsuario.cadastroInfoBasica(
             tfLogin.getText(), 
             tfSenha.getPassword().toString(), 
             tfNome.getText(), 
             tfCpfCnpj.getText(), 
-            emails, telefones, 
-            TipoUsuario.ADMIN
+            emails, 
+            telefones, 
+            tipoUsuario
         );
         
         setVisible(false);
-        CadastroInfoEndereco cadastroAdmin = new CadastroInfoEndereco(TipoCadastro.ADMIN);
-        cadastroAdmin.setVisible(true);
+        CadastroInfoEndereco cadastroEndereco = new CadastroInfoEndereco(TipoCadastro.obterPorIndice(tipoUsuario.getIndice()), cadastrarEmpresa);
+        cadastroEndereco.setVisible(true);
                 
     
     }
@@ -336,12 +358,11 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
                 break;
                 
             case ADMIN:
-                cadastroAdmin();
+                cadastroUsuario(TipoUsuario.ADMIN);
                 break;
                 
             case FUNCIONARIO:
-                
-                System.out.println("Cadastro de Funcionário");
+                cadastroUsuario(TipoUsuario.FUNCIONARIO);
                 break;
                 
             case CLIENTE:

@@ -36,4 +36,12 @@ public class CtrLogin {
         empresa = Logar.getEmpresaUsuario();
     }
     
+    public static Empresa getEmpresa(){
+        return empresa;
+    }
+    
+    public static UsuarioLogin getUsuarioLogado(){
+        return usuarioLogado;
+    }
+    
 }
