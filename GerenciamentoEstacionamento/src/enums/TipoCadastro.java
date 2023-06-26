@@ -6,10 +6,10 @@ package enums;
  */
 public enum TipoCadastro {
     
-    EMPRESA (0, "Empresa"),
-    ADMIN (1, "Admin"),
-    FUNCIONARIO (2, "Funcionario"),
-    CLIENTE (3, "Cliente"),
+    CLIENTE (0, "Cliente"),
+    FUNCIONARIO (1, "Funcionario"),
+    ADMIN (2, "Admin"),
+    EMPRESA (3, "Empresa"),
     BOXVAGA (4, "BoxVaga");
     
     private int indice;

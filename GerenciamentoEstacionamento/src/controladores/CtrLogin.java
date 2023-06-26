@@ -29,11 +29,12 @@ public class CtrLogin {
     
     private static void setUsuarioLogin(Conexao con){
         usuarioLogado = Logar.getUsuarioLogin(con);
-        setEmpresa();
+        setEmpresa(con);
+        CtrBoxVaga.setBoxVagas(con, empresa.getEmpresaId());
     }
     
-    private static void setEmpresa(){
-        empresa = Logar.getEmpresaUsuario();
+    private static void setEmpresa(Conexao con){
+        empresa = Logar.getEmpresaUsuario(con);
     }
     
     public static Empresa getEmpresa(){

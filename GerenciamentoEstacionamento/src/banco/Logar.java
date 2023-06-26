@@ -65,8 +65,6 @@ public class Logar {
         
         UsuarioLogin usuarioLogado = buscarUsuarioLogado(con, emails, telefones, enderecos);
         
-        con.fecharConexao();
-        
         return usuarioLogado;
         
     }
@@ -265,10 +263,8 @@ public class Logar {
         return usuarioLogado;
     }
 
-    public static Empresa getEmpresaUsuario() {
-        Conexao con = new Conexao();
-        con.abrirConexao(true);
-        
+    public static Empresa getEmpresaUsuario(Conexao con) {
+
         if(empresaId == -1)
             throw new LogarException("Empresa inválida!");
         
@@ -279,8 +275,6 @@ public class Logar {
         ArrayList<Endereco> enderecos = buscarEnderecosEmpresa(con);
         
         Empresa empresa = buscarEmpresaUsuario(con, emails, telefones, enderecos);
-        
-        con.fecharConexao();
         
         return empresa;
     }
@@ -435,17 +429,20 @@ public class Logar {
         Empresa empresa = null;
         
         Consulta consulta = con.novaConsulta();
-        
+      
         StringBuilder sql = new StringBuilder();
         
         sql
         .append("SELECT ")
-        .append("  NOME_RAZAO_SOCIAL, ")
-        .append("  CPF_CNPJ ")
+        .append("  EMP.NOME_RAZAO_SOCIAL, ")
+        .append("  EMP.CPF_CNPJ ")
                 
-        .append("FROM EMPRESA ")
+        .append("FROM EMPRESA EMP ")
+                
+        .append("INNER JOIN USUARIO USU ")
+        .append("ON EMP.EMPRESA_ID = USU.EMPRESA_ID ")
 
-        .append("WHERE EMPRESA_ID = ? ");
+        .append("WHERE USU.USUARIO_ID = ? ");
         
         consulta.setSql(sql.toString());
         

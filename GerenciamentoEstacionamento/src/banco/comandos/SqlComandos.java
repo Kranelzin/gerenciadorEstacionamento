@@ -18,7 +18,6 @@ public abstract class SqlComandos implements InterfaceSql{
     protected int linhasAfetadas;
     
     protected SqlComandos(Conexao con){
-        con.abrirConexao();
         this.con = con;
     }
     
@@ -35,9 +34,8 @@ public abstract class SqlComandos implements InterfaceSql{
             throw new BancoException("O sql não foi informado! ");
         }
         
-        st = con.getStatement(sql, generatedKeys);
-
         try{
+            st = con.getStatement(sql, generatedKeys);
             for (int i = 0; i < parametros.length; i++)
                 st.setObject(i+1, parametros[i]);
         }

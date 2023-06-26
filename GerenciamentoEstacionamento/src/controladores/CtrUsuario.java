@@ -1,6 +1,6 @@
 package controladores;
 
-import banco.CadastrarUsuario;
+import banco.BancoUsuario;
 import banco.comandos.Conexao;
 import enums.TipoUsuario;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import objetos.Telefone;
  *
  * @author marce
  */
-public class CtrCadastroUsuario {
+public class CtrUsuario {
     
     private static String login;
     private static String senha;
@@ -46,7 +46,7 @@ public class CtrCadastroUsuario {
    
     public static void cadastrarNovoUsuario(Conexao con, int empresaId){
  
-        CadastrarUsuario.inerirNovoUsuario(con, empresaId, login, senha, tipoUsuario, nome, cpfCnpj, emails, enderecos, telefones);
+        BancoUsuario.inerirNovoUsuario(con, empresaId, login, senha, tipoUsuario, nome, cpfCnpj, emails, enderecos, telefones);
         
     }
     
@@ -56,7 +56,9 @@ public class CtrCadastroUsuario {
         
         int empresaId = CtrLogin.getEmpresa().getEmpresaId();
         
-        CadastrarUsuario.inerirNovoUsuario(con, empresaId, login, senha, tipoUsuario, nome, cpfCnpj, emails, enderecos, telefones);
+        BancoUsuario.inerirNovoUsuario(con, empresaId, login, senha, tipoUsuario, nome, cpfCnpj, emails, enderecos, telefones);
+        
+        con.fecharConexao();
         
     }
     

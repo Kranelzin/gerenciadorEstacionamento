@@ -8,26 +8,30 @@ package objetos;
 import enums.Meses;
 import exceptions.RealizarPagamentoException;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class Mensalidade{
     private BigDecimal valorMensalidade;
-    private final Timestamp dataInicio;
-    private Timestamp dataFim;
+    private final Date dataInicio;
+    private Date dataFim;
     private boolean ativa;
     private final int diaVencimentoPagamento;
     private ArrayList<PagamentoMensalidade> pagamentosRealizados;
     private ArrayList<PagamentoMensalidade> pagamentos;
     
-    public Mensalidade (int diaVencimentoPagamento, Timestamp dataInicio){
+    public Mensalidade (int diaVencimentoPagamento, Date dataInicio, BigDecimal valorMensalidade){
         this.diaVencimentoPagamento = diaVencimentoPagamento;
         this.dataInicio = dataInicio;
+        this.valorMensalidade = valorMensalidade;
         ativa = true;
     }
     
+    public boolean isAtiva(){
+        return ativa;
+    }
     public BigDecimal getValorMensalidade(){
         return valorMensalidade;
     }
@@ -36,9 +40,13 @@ public class Mensalidade{
         return diaVencimentoPagamento;
     }
     
+    public Date getDataInicio(){
+        return dataInicio;
+    }
+    
     public ArrayList<PagamentoMensalidade> getMesesPagamento(){
         
-        Timestamp data = new Timestamp(System.currentTimeMillis());
+        Date data = new Date();
         Calendar dataAtual = new GregorianCalendar();
         dataAtual.setTime(data);
         
@@ -49,6 +57,9 @@ public class Mensalidade{
                     
         Calendar dataInicioMens = new GregorianCalendar();
         dataInicioMens.setTime(dataInicio);
+        
+        if(dataFim != null)
+            dataAtual.setTime(dataFim);
         
         while(dataInicioMens.before(dataAtual)){
             int mes = dataInicioMens.get(Calendar.MONTH + 1);
@@ -86,7 +97,7 @@ public class Mensalidade{
         return pagamentosRealizados;
     }
     
-    public void realizarPagamento(BigDecimal valor, Timestamp dataPagamento, Meses mesReferencia, int anoReferencia) throws RealizarPagamentoException{
+    public void realizarPagamento(BigDecimal valor, Date dataPagamento, Meses mesReferencia, int anoReferencia) throws RealizarPagamentoException{
         if((valor.compareTo(valorMensalidade) != 0))
             throw new RealizarPagamentoException(valorMensalidade);
         
@@ -100,7 +111,7 @@ public class Mensalidade{
         pagamentosRealizados.add(pagamanetoMensalidade);
     }
     
-    public void canelarMensalidade(Timestamp dataFim){
+    public void canelarMensalidade(Date dataFim){
         this.dataFim = dataFim;
         ativa = false;
     }

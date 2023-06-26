@@ -6,15 +6,15 @@ package objetos;
  */
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.util.Date;
 
 public class Pagamento {
     private final BigDecimal valor;
-    private final Timestamp dataPagamento;
+    private final Date dataPagamento;
     
     public Pagamento(
             BigDecimal valor, 
-            Timestamp dataPagamento
+            Date dataPagamento
     ){
         this.valor = valor;
         this.dataPagamento = dataPagamento;
@@ -24,7 +24,7 @@ public class Pagamento {
         return valor;
     }
     
-    public Timestamp getDataPagamento(){
+    public Date getDataPagamento(){
         return dataPagamento;
     }
 }

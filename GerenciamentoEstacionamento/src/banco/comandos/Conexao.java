@@ -109,6 +109,7 @@ public class Conexao{
     protected void rollback(){
         try {
             conexao.rollback();
+            close();
         } catch (SQLException e) {
             throw new BancoException("Erro ao dar rollback: " + e.getMessage());
         }

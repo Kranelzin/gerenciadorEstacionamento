@@ -1,9 +1,9 @@
 package Repositorio;
 
-import enums.Estados;
 import exceptions.SenhaException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JOptionPane;
@@ -73,8 +73,8 @@ public class Biblioteca {
         
     }
 
-    public static boolean verificarValorValido(Class<?> classe, Object value) {
-        return classe.isInstance(value);
+    public static boolean verificarValorValido(Class<?> classe, Object valor) {
+        return valor == null || classe.isInstance(valor);
     }
     
     public static void exibirAlerta(String mensagem) {
@@ -85,12 +85,30 @@ public class Biblioteca {
         JOptionPane.showMessageDialog(null, mensagem, titulo, JOptionPane.WARNING_MESSAGE);
     }
 
+    public static int exibirCaixaDialogo(String titulo, String mensagem){
+        return JOptionPane.showConfirmDialog(null, mensagem, titulo, JOptionPane.YES_NO_OPTION);
+    }
+    
     public static boolean somenteNumeros(String texto) {
         
         for(char c : texto.toCharArray()){
             if(!Character.isDigit(c))        
                 return false;
         }
+        
+        return true;
+    }
+    
+    public static boolean verificarContemNosComponentes(ArrayList<String> componentes, ArrayList<String> componentesVerificar) throws Exception{
+        
+        if(componentes.size() != componentesVerificar.size())
+            throw new Exception("verificarContemNosComponentes: listas com tamanhos diferentes! ");
+        
+        for(int i =0; i < componentes.size(); i++){
+            if(!componentes.get(i).contentEquals(componentesVerificar.get(i)))
+                return false;
+        }
+        
         
         return true;
     }

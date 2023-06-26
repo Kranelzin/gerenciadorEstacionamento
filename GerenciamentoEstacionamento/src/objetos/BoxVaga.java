@@ -9,7 +9,8 @@ import exceptions.EstacionarVagaException;
 import java.sql.Timestamp;
 
 public class BoxVaga {
-    private final char codigo;
+    private int usuarioId;
+    private final String codigo;
     private final int vaga;
     private Timestamp dataHoraUltEntrada;
     private Timestamp dataHoraUltSaida;
@@ -18,19 +19,30 @@ public class BoxVaga {
     private Veiculo veiculo;
     
     public BoxVaga(
-        char codigo,
+        String codigo,
         int vaga,
-        Timestamp dataHoraUltEntrada
+        Timestamp dataHoraUltEntrada,
+        Timestamp dataHoraUltSaida,
+        boolean reservada,
+        Veiculo veiculo
     ){
         this.codigo = codigo;
         this.vaga = vaga;
+        this.dataHoraUltEntrada = dataHoraUltEntrada;
+        this.dataHoraUltSaida = dataHoraUltSaida;
+        this.reservada = reservada;
+        this.veiculo = veiculo;
+    }
+    
+    public int getUsuarioId(){
+        return usuarioId;
     }
     
     public String getCodigoVaga(){
-        return codigo+Integer.toString(vaga);
+        return codigo + Integer.toString(vaga);
     }
     
-    public char getCodigo(){
+    public String getCodigo(){
         return codigo;
     }
     
@@ -56,6 +68,10 @@ public class BoxVaga {
     
     public boolean isEmUso(){
         return emUso;
+    }
+    
+    public void setUsuarioId(int usuarioId){
+        this.usuarioId = usuarioId;
     }
     
     public void setEmUso(boolean emUso){

@@ -1,9 +1,11 @@
 package interfaceGrafica.cadastros;
 
 import Repositorio.Biblioteca;
-import banco.BuscarEndereco;
-import controladores.CtrCadastroUsuario;
+import banco.BancoEndereco;
+import controladores.CtrCliente;
+import controladores.CtrUsuario;
 import controladores.CtrCadastroEmpresa;
+import controladores.CtrInterfacesGraficas;
 import enums.Estados;
 import enums.TipoCadastro;
 import enums.TipoEndereco;
@@ -29,18 +31,24 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
         initComponents();
         configurarSpinnerUf();
         rbResidencial.setSelected(true);
-        lbUltimoEndereco.setVisible(false);
+        spEndereco.setVisible(false);
         setLocationRelativeTo(null);
         lbTitulo.setText("Cadastro " + tipoCadastro.getDescricao());
+        configurarSpEndereco();
     }
     
-    private void adicionarEndereco(){
+    private boolean adicionarEndereco(){
         
         String logradouro =  tfLogradouro.getText();
         String numero = tfNumero.getText();
         String complemento =  tfComplemento.getText();
         String bairro = tfBairro.getText();
         String cidade = tfCidade.getText();
+        
+        String enderecoSp = (String) spEndereco.getValue();
+        
+        if(enderecoSp.contentEquals("Novo endereço") && enderecos.size() > 0)
+            return true;
         
         if(Biblioteca.verificarCamposVazios(
                 logradouro,
@@ -50,7 +58,7 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
                 cidade
         )){
             Biblioteca.exibirAlerta("Preencha todos os campos");
-            return;
+            return false;
         }
             
         
@@ -62,14 +70,14 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
             tipoEstado = Estados.obterPorDescricao((String) spEstado.getValue());
         else{
             Biblioteca.exibirAlerta("O estado selecionado é inválido");
-            return;
+            return false;
         }
         
-        CidadeEstado cidadeEstado = BuscarEndereco.buscarCidadeEstado(cidade, tipoEstado.getUF());
+        CidadeEstado cidadeEstado = BancoEndereco.buscarCidadeEstado(cidade, tipoEstado.getUF());
         
         if(cidadeEstado == null){
             Biblioteca.exibirAlerta("Cidade não encontrada para o estado selecionado");
-            return;
+            return false;
         }
         
         Endereco endereco = new Endereco(
@@ -83,6 +91,12 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
         );
         
         enderecos.add(endereco);
+        
+        configurarSpEndereco();
+        limparCampos();
+        
+        return true;
+        
     }
 
     @SuppressWarnings("unchecked")
@@ -111,7 +125,9 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
         rbComercial = new javax.swing.JRadioButton();
         rbResidencial = new javax.swing.JRadioButton();
         jLabel4 = new javax.swing.JLabel();
-        lbUltimoEndereco = new javax.swing.JLabel();
+        btVoltar = new javax.swing.JButton();
+        spEndereco = new javax.swing.JSpinner();
+        btEnderecoRemover = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -170,10 +186,24 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
 
         jLabel4.setText("Tipo");
 
-        lbUltimoEndereco.setText("jLabel9");
-        lbUltimoEndereco.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbUltimoEnderecoMouseClicked(evt);
+        btVoltar.setText("Voltar");
+        btVoltar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btVoltarActionPerformed(evt);
+            }
+        });
+
+        spEndereco.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                spEnderecoStateChanged(evt);
+            }
+        });
+
+        btEnderecoRemover.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        btEnderecoRemover.setText("-");
+        btEnderecoRemover.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btEnderecoRemoverActionPerformed(evt);
             }
         });
 
@@ -181,25 +211,9 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lbTitulo)
-                .addGap(268, 268, 268))
             .addGroup(layout.createSequentialGroup()
                 .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lbUltimoEndereco)
-                        .addGap(174, 174, 174)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(btProximo)
-                                .addGap(31, 31, 31))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(75, 75, 75)
-                                .addComponent(jLabel15)
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addGap(206, 293, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
@@ -218,38 +232,64 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel4))
-                        .addGap(39, 39, 39)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(rbComercial)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(rbResidencial))
+                                .addComponent(spEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(154, 154, 154)
+                                .addComponent(btProximo))
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(tfCidade, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
-                                    .addComponent(spEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(tfBairro)
-                                    .addComponent(tfComplemento))
-                                .addGap(4, 4, 4)
-                                .addComponent(btEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap())))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel6)
+                                    .addComponent(jLabel7)
+                                    .addComponent(jLabel8)
+                                    .addComponent(jLabel4))
+                                .addGap(39, 39, 39)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(rbComercial)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(rbResidencial)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(btEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(btEnderecoRemover, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(tfCidade, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                                        .addComponent(spEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(tfBairro)
+                                        .addComponent(tfComplemento)))))
+                        .addGap(206, 264, Short.MAX_VALUE))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(lbTitulo)
+                        .addGap(176, 176, 176)
+                        .addComponent(btVoltar)
+                        .addGap(15, 15, 15))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel15)
+                        .addGap(286, 286, 286))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(9, 9, 9)
-                .addComponent(lbTitulo)
+                .addGap(8, 8, 8)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbTitulo)
+                    .addComponent(btVoltar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel15)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btProximo)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btEnderecoRemover, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btProximo)
+                            .addComponent(spEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(14, 14, 14))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(62, 62, 62)
@@ -279,37 +319,62 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(spEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel8)
-                            .addComponent(btEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel8))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(rbComercial)
                             .addComponent(rbResidencial)
                             .addComponent(jLabel4))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(lbUltimoEndereco)
-                        .addContainerGap(49, Short.MAX_VALUE))))
+                        .addContainerGap(72, Short.MAX_VALUE))))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btEnderecoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEnderecoActionPerformed
-        
+        spEndereco.setVisible(true);
         adicionarEndereco();
-        limparCampos();
-        lbUltimoEndereco.setText(enderecos.get(enderecos.size() - 1).getLogradouro() + " X ");
-        lbUltimoEndereco.setVisible(true);
+       
     }//GEN-LAST:event_btEnderecoActionPerformed
 
     private void tfCepFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfCepFocusLost
         String cep = tfCep.getText();
         
-        Endereco endereco = BuscarEndereco.pesquisarEndereco(cep);
+        Endereco endereco = BancoEndereco.pesquisarEndereco(cep);
             
         if(!endereco.temCep()){
             Biblioteca.exibirAlerta("Cep não encontrado");
             return;
+        }
+        
+        ArrayList<String> componentesVerificar = new ArrayList<>();
+        componentesVerificar.add(tfCep.getText());
+        componentesVerificar.add(tfLogradouro.getText());
+        componentesVerificar.add(tfNumero.getText());
+        componentesVerificar.add(tfComplemento.getText());
+        componentesVerificar.add(tfBairro.getText());
+        componentesVerificar.add(tfCidade.getText());
+        componentesVerificar.add((String) spEstado.getValue());
+        
+        for(Endereco end : enderecos){
+            ArrayList<String> componentes = new ArrayList<>();
+            componentes.add(Integer.toString(end.getCep()));
+            componentes.add(end.getLogradouro());
+            componentes.add(Integer.toString(end.getNumero()));
+            componentes.add(end.getComplemento());
+            componentes.add(end.getBairro());
+            componentes.add(end.getCidadeEstado().getCidade());
+            componentes.add(end.getCidadeEstado().getEstado().getUF());
+            
+            try {
+                if(Biblioteca.verificarContemNosComponentes(componentes, componentesVerificar)){
+                    Biblioteca.exibirAlerta("Endereço já adicionado");
+                    return;
+                }
+            } 
+            catch (Exception e) {
+                Biblioteca.exibirAlerta("Erro ao adicionar endereço");
+            }
         }
         
         tfLogradouro.setText(endereco.getLogradouro());
@@ -320,7 +385,8 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
 
     private void btProximoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btProximoActionPerformed
         
-        adicionarEndereco();
+        if(!adicionarEndereco())
+            return;
         
         switch (tipoCadastro) {
             case EMPRESA:
@@ -328,6 +394,7 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
                     CtrCadastroEmpresa.cadastroInfoEndereco(enderecos);
                     setVisible(false);
                     CadastroInfoBasica cadastro = new CadastroInfoBasica(TipoCadastro.ADMIN, true);
+                    CtrInterfacesGraficas.setCadastroInfoBasica(cadastro);
                     cadastro.setVisible(true);
 
                 }
@@ -337,15 +404,18 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
                 break;
             case ADMIN:
                 try{
-                    CtrCadastroUsuario.cadastroInfoEndereco(enderecos);
-                    setVisible(false);
-                    Login login = new Login();
-                    login.setVisible(true);
+                    CtrUsuario.cadastroInfoEndereco(enderecos);
                     
                     if(cadastrarEmpresa)
                         CtrCadastroEmpresa.cadastrarNovaEmpresa();
                     else
-                        CtrCadastroUsuario.cadastrarNovoUsuario();
+                        CtrUsuario.cadastrarNovoUsuario();
+                    
+                    Biblioteca.exibirAlerta("Salvo com sucesso!");
+                    setVisible(false);
+                    Login login = new Login();
+                    login.setVisible(true);
+                    
                 }
                 catch(Exception e){
                     Biblioteca.exibirAlerta("Erro ao cadastrar admin: " + e.getMessage());
@@ -353,14 +423,26 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
                 break;
             case FUNCIONARIO:
                 try{
-                    CtrCadastroUsuario.cadastrarNovoUsuario();
+                    CtrUsuario.cadastroInfoEndereco(enderecos);
+                    CtrUsuario.cadastrarNovoUsuario();
+                    Biblioteca.exibirAlerta("Salvo com sucesso!");
+                    setVisible(false);
+                    MenuCadastros menu = new MenuCadastros();
+                    CtrInterfacesGraficas.setmMenuCadastros(menu);
+                    menu.setVisible(true);
+                    
                 }
                 catch(Exception e){
                     Biblioteca.exibirAlerta("Erro ao cadastrar Funcionario: " + e.getMessage());
                 }
                 break;
             case CLIENTE:
-                System.out.println("Cadastro de Cliente");
+
+                CtrCliente.cadastroInfoEndereco(enderecos);
+                setVisible(false);
+                CadastroInfoVeiculo cadastroVeiculo = new CadastroInfoVeiculo(tipoCadastro);
+                cadastroVeiculo.setVisible(true);
+                CtrInterfacesGraficas.setCadastroVeiculo(cadastroVeiculo);
                 break;
             default:
                 System.out.println("Tipo de cadastro inválido");
@@ -372,22 +454,90 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_rbComercialActionPerformed
 
-    private void lbUltimoEnderecoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbUltimoEnderecoMouseClicked
-         int ultimaPos = enderecos.size() - 1;
+    private void btVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btVoltarActionPerformed
+        setVisible(false);
+        CadastroInfoBasica cadastro = CtrInterfacesGraficas.getCadastroInfoBasica();
+        cadastro.setVisible(true);
+    }//GEN-LAST:event_btVoltarActionPerformed
+
+    private void btEnderecoRemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEnderecoRemoverActionPerformed
+        String rua = tfLogradouro.getText();
+
+        if(rua.contentEquals(""))
+            return;
+
+        ArrayList<String> componentesVerificar = new ArrayList<>();
+        componentesVerificar.add(tfCep.getText());
+        componentesVerificar.add(tfLogradouro.getText());
+        componentesVerificar.add(tfNumero.getText());
+        componentesVerificar.add(tfComplemento.getText());
+        componentesVerificar.add(tfBairro.getText());
+        componentesVerificar.add(tfCidade.getText());
+        componentesVerificar.add((String) spEstado.getValue());
         
-        enderecos.remove(ultimaPos);
+        for(Endereco endereco : enderecos){
+            ArrayList<String> componentes = new ArrayList<>();
+            componentes.add(Integer.toString(endereco.getCep()));
+            componentes.add(endereco.getLogradouro());
+            componentes.add(Integer.toString(endereco.getNumero()));
+            componentes.add(endereco.getComplemento());
+            componentes.add(endereco.getBairro());
+            componentes.add(endereco.getCidadeEstado().getCidade());
+            componentes.add(endereco.getCidadeEstado().getEstado().getUF());
+            
+            try {
+                if(Biblioteca.verificarContemNosComponentes(componentes, componentesVerificar))
+                    enderecos.remove(endereco);
+            } 
+            catch (Exception e) {
+                Biblioteca.exibirAlerta("Erro ao remover endereço");
+            }
+            
+        }
+
+        limparCampos();
+        spEndereco.setValue("Novo endereço");
+    }//GEN-LAST:event_btEnderecoRemoverActionPerformed
+
+    private void spEnderecoStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spEnderecoStateChanged
+        String rua = (String) spEndereco.getValue();
         
-        if(enderecos.size() == 0){
-            lbUltimoEndereco.setVisible(false);
+        if(rua.contentEquals("Novo endereço")){
+            limparCampos();
             return;
         }
         
-        lbUltimoEndereco.setText(enderecos.get(ultimaPos - 1).getLogradouro()+ " X ");
-    }//GEN-LAST:event_lbUltimoEnderecoMouseClicked
+        Endereco endereco = null;
+        int contador = 1;
+        for(Endereco end : enderecos){
+            if(rua.contentEquals(contador + " - " + end.getLogradouro())){
+                endereco = end;
+                break;
+            }
+            
+            contador ++;
+        } 
+        
+        if(endereco == null)
+            return;
+        
+        tfCep.setText(Integer.toString(endereco.getCep()));
+        tfLogradouro.setText(endereco.getLogradouro());
+        tfNumero.setText(Integer.toString(endereco.getNumero()));
+        tfComplemento.setText(endereco.getComplemento());
+        tfBairro.setText(endereco.getBairro());
+        tfCidade.setText(endereco.getCidadeEstado().getCidade());
+        spEstado.setValue(endereco.getCidadeEstado().getEstado().getUF());
+        rbComercial.setSelected(endereco.getTipo() == TipoEndereco.COMERCIAL);
+        rbResidencial.setSelected(endereco.getTipo() == TipoEndereco.RESIDENCIAL);
+        
+    }//GEN-LAST:event_spEnderecoStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btEndereco;
+    private javax.swing.JButton btEnderecoRemover;
     private javax.swing.JButton btProximo;
+    private javax.swing.JButton btVoltar;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel15;
@@ -399,9 +549,9 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel lbTitulo;
-    private javax.swing.JLabel lbUltimoEndereco;
     private javax.swing.JRadioButton rbComercial;
     private javax.swing.JRadioButton rbResidencial;
+    private javax.swing.JSpinner spEndereco;
     private javax.swing.JSpinner spEstado;
     private javax.swing.JTextField tfBairro;
     private javax.swing.JTextField tfCep;
@@ -429,5 +579,18 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
         tfCidade.setText("");
         spEstado.setValue(Estados.AC.getUF());
         
+    }
+
+    private void configurarSpEndereco() {
+        ArrayList<String> ruas = new ArrayList<>();
+        ruas.add("Novo endereço");
+        
+        int contador = 1;
+        for(Endereco endereco : enderecos){
+            ruas.add(contador+ " - " + endereco.getLogradouro());
+            contador ++;
+        }
+        
+        spEndereco.setModel(new SpinnerListModel(ruas));
     }
 }

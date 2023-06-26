@@ -70,16 +70,24 @@ public class Consulta extends SqlComandosRetorno{
             throw new BancoException("Loop de consulta não iniciado, usar while(!fimConsulta()) para obter dados");
         }
         try {
+            
+            if(!dados.get(pos).containsKey(nomeColuna))
+                throw new BancoException("Nome inválido para a coluna: " + nomeColuna);
+            
             Object valor = dados.get(pos).get(nomeColuna);
             
-            if (valor == null || !Biblioteca.verificarValorValido(tipoDado, valor))
-                throw new BancoException("Tipo de valor ou nome inválido para a coluna: " + nomeColuna);
+            if(valor == null && tipoDado == Integer.class)
+                valor = 0;
+            
+            if (!Biblioteca.verificarValorValido(tipoDado, valor))
+                throw new BancoException("Tipo de valor inválido para a coluna: " + nomeColuna);
             
             return tipoDado.cast(valor);
             
         } catch (NullPointerException e) {
             throw new BancoException(e.getMessage(), nomeColuna);
         }
+        
     }
 
 }

@@ -31,9 +31,9 @@ public abstract class SqlComandosRetorno extends SqlComandos implements Interfac
                 
                 HashMap<String, Object> linhas = new HashMap<>();
                 
-                for (int i = 1; i <= metaData.getColumnCount(); i++) 
+                for (int i = 1; i <= metaData.getColumnCount(); i++){
                     linhas.put(metaData.getColumnName(i),rs.getObject(i) instanceof Boolean ? ((boolean) rs.getObject(i) ? 1 : 0) : rs.getObject(i));
-                
+                }
                 dados.add(linhas);
             }
         }

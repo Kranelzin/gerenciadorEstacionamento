@@ -12,14 +12,15 @@ import exceptions.RealizarPagamentoException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Cliente extends Usuario{
     
-    private ArrayList<BoxVaga> boxVagas;
+    private ArrayList<BoxVaga> boxVagas = new ArrayList<>();
     private boolean mensalista;
     private Mensalidade mensalidade;
-    private ArrayList<Pagamento> pagamentos;
-    private ArrayList<Veiculo> veiculos;
+    private ArrayList<Pagamento> pagamentos = new ArrayList<>();
+    private ArrayList<Veiculo> veiculos = new ArrayList<>();
     
     public Cliente(
         int usuarioId, 
@@ -46,7 +47,7 @@ public class Cliente extends Usuario{
     }
     
     
-    public ArrayList<BoxVaga> getBoxVaga(){
+    public ArrayList<BoxVaga> getBoxVagas(){
         return boxVagas;
     }
     
@@ -80,9 +81,9 @@ public class Cliente extends Usuario{
         pagamentos.add(new Pagamento(valor, data));
     }
     
-    public void cadastrarPagamentoMensal(int diaVencimentoPagamento, Timestamp dataInicio, ArrayList<BoxVaga> boxvagas){
+    public void cadastrarPagamentoMensal(Mensalidade mensalidade, ArrayList<BoxVaga> boxVagas){
         mensalista = true;
-        mensalidade = new Mensalidade(diaVencimentoPagamento, dataInicio);
+        this.mensalidade = mensalidade;
         
         for(BoxVaga boxVaga : boxVagas){
             boxVaga.setReservada(true);
@@ -93,7 +94,7 @@ public class Cliente extends Usuario{
         
     }
     
-    public void cancelarMensalidade(Timestamp dataFim){
+    public void cancelarMensalidade(Date dataFim){
         mensalista = false;
         mensalidade.canelarMensalidade(dataFim);
         

@@ -1,5 +1,9 @@
 @startuml
+class enums.Estados
 class enums.Meses
+class enums.TipoEndereco
+class enums.TipoTelefone
+class enums.TipoUsuario
 class exceptions.EstacionarVagaException
 class exceptions.RealizarPagamentoException
 class java.math.BigDecimal
@@ -9,6 +13,7 @@ class java.util.Calendar
 class java.util.GregorianCalendar
 class objetos.Admin
 class objetos.BoxVaga
+class objetos.CidadeEstado
 class objetos.Cliente
 class objetos.Empresa
 class objetos.Endereco
@@ -18,12 +23,16 @@ class objetos.Pagamento
 class objetos.PagamentoMensalidade
 class objetos.Telefone
 class objetos.Usuario
+class objetos.UsuarioLogin
 class objetos.Veiculo
+objetos.Admin ..> enums.TipoUsuario
 objetos.Admin ..> java.util.ArrayList
-objetos.Admin --|> objetos.Usuario
+objetos.Admin --|> objetos.UsuarioLogin
 objetos.BoxVaga ..> exceptions.EstacionarVagaException
 objetos.BoxVaga ..> java.sql.Timestamp
+objetos.CidadeEstado ..> enums.Estados
 objetos.Cliente ..> enums.Meses
+objetos.Cliente ..> enums.TipoUsuario
 objetos.Cliente ..> exceptions.EstacionarVagaException
 objetos.Cliente ..> exceptions.RealizarPagamentoException
 objetos.Cliente ..> java.math.BigDecimal
@@ -31,8 +40,10 @@ objetos.Cliente ..> java.sql.Timestamp
 objetos.Cliente ..> java.util.ArrayList
 objetos.Cliente --|> objetos.Usuario
 objetos.Empresa ..> java.util.ArrayList
+objetos.Endereco ..> enums.TipoEndereco
+objetos.Funcionario ..> enums.TipoUsuario
 objetos.Funcionario ..> java.util.ArrayList
-objetos.Funcionario --|> objetos.Usuario
+objetos.Funcionario --|> objetos.UsuarioLogin
 objetos.Mensalidade ..> enums.Meses
 objetos.Mensalidade ..> exceptions.RealizarPagamentoException
 objetos.Mensalidade ..> java.math.BigDecimal
@@ -46,5 +57,10 @@ objetos.PagamentoMensalidade ..> enums.Meses
 objetos.PagamentoMensalidade ..> java.math.BigDecimal
 objetos.PagamentoMensalidade ..> java.sql.Timestamp
 objetos.PagamentoMensalidade --|> objetos.Pagamento
+objetos.Telefone ..> enums.TipoTelefone
+objetos.Usuario ..> enums.TipoUsuario
 objetos.Usuario ..> java.util.ArrayList
+objetos.UsuarioLogin ..> enums.TipoUsuario
+objetos.UsuarioLogin ..> java.util.ArrayList
+objetos.UsuarioLogin --|> objetos.Usuario
 @enduml

@@ -1,10 +1,10 @@
 package interfaceGrafica;
 
 import Repositorio.Biblioteca;
+import controladores.CtrInterfacesGraficas;
 import controladores.CtrLogin;
 import enums.TipoCadastro;
 import interfaceGrafica.cadastros.CadastroInfoBasica;
-import java.util.Arrays;
 
 /**
  *
@@ -15,6 +15,7 @@ public class Login extends javax.swing.JFrame {
     public Login() {
         initComponents();
         setLocationRelativeTo(null);
+        CtrInterfacesGraficas.limpar();
     }
 
     @SuppressWarnings("unchecked")
@@ -112,6 +113,7 @@ public class Login extends javax.swing.JFrame {
         if(CtrLogin.logarUsuario(login, senha)){
             setVisible(false);
             Menu menu = new Menu();
+            CtrInterfacesGraficas.setMenu(menu);
             menu.setVisible(true);
         }
         else
@@ -125,6 +127,7 @@ public class Login extends javax.swing.JFrame {
         setVisible(false);
         repaint();
         CadastroInfoBasica cadastroEmpresa = new CadastroInfoBasica(TipoCadastro.EMPRESA);
+        CtrInterfacesGraficas.setCadastroInfoBasica(cadastroEmpresa);
         cadastroEmpresa.setVisible(true);
     }//GEN-LAST:event_lbCadastrarMouseClicked
 

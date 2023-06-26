@@ -7,8 +7,7 @@ import interfaceGrafica.Login;
  * @author marce
  */
 public class GerenciamentoEstacionamento {
-    
-    
+
 
     public static void main(String[] args) {
         

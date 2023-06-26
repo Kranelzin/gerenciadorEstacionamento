@@ -1,5 +1,6 @@
 package interfaceGrafica;
 
+import controladores.CtrInterfacesGraficas;
 import interfaceGrafica.cadastros.MenuCadastros;
 
 /**
@@ -77,6 +78,7 @@ public class Menu extends javax.swing.JFrame {
     private void btCadastrosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCadastrosActionPerformed
         setVisible(false);
         MenuCadastros menuCadastros = new MenuCadastros();
+        CtrInterfacesGraficas.setmMenuCadastros(menuCadastros);
         menuCadastros.setVisible(true);
     }//GEN-LAST:event_btCadastrosActionPerformed
 

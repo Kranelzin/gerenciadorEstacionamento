@@ -7,7 +7,7 @@ package objetos;
 
 import enums.Meses;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.util.Date;
 
 public class PagamentoMensalidade extends Pagamento{
     private final Meses mesReferencia;
@@ -16,7 +16,7 @@ public class PagamentoMensalidade extends Pagamento{
     
     public PagamentoMensalidade(
             BigDecimal valor,
-            Timestamp dataPagamento,
+            Date dataPagamento,
             Meses mesReferencia,
             int anoReferencia
 

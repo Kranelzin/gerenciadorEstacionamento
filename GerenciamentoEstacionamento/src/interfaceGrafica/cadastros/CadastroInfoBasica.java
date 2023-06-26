@@ -1,12 +1,16 @@
 package interfaceGrafica.cadastros;
 
 import Repositorio.Biblioteca;
-import controladores.CtrCadastroUsuario;
+import controladores.CtrCliente;
+import controladores.CtrUsuario;
 import controladores.CtrCadastroEmpresa;
+import controladores.CtrInterfacesGraficas;
 import enums.TipoCadastro;
 import enums.TipoTelefone;
 import enums.TipoUsuario;
+import interfaceGrafica.Login;
 import java.util.ArrayList;
+import javax.swing.SpinnerListModel;
 import objetos.Telefone;
 
 /**
@@ -23,34 +27,28 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
      public CadastroInfoBasica(TipoCadastro tipoCadastro, boolean cadastrarEmpresa){
         this.tipoCadastro = tipoCadastro;
         this.cadastrarEmpresa = cadastrarEmpresa;
-        initComponents();
-        rbMovel.setSelected(true);
-        setLocationRelativeTo(null);
-        lbTitulo.setText("Cadastro " + tipoCadastro.getDescricao());
-        lbUltimoEmail.setVisible(false);
-        lbUltimoTelefone.setVisible(false);
+        iniciarComponentes();
         
-        if(tipoCadastro == TipoCadastro.EMPRESA){
-            lbLogin.setVisible(false);
-            lbSenha.setVisible(false);
-            lbSenhaRepetida.setVisible(false);
-            tfLogin.setVisible(false);
-            tfSenha.setVisible(false);
-            tfSenhaRepetida.setVisible(false);
-            
-        }
      }
     
     public CadastroInfoBasica(TipoCadastro tipoCadastro) {
         this.tipoCadastro = tipoCadastro;
+        iniciarComponentes();
+    }
+    
+    private void iniciarComponentes(){
+        
         initComponents();
         rbMovel.setSelected(true);
         setLocationRelativeTo(null);
         lbTitulo.setText("Cadastro " + tipoCadastro.getDescricao());
-        lbUltimoEmail.setVisible(false);
-        lbUltimoTelefone.setVisible(false);
+        spEmail.setVisible(false);
+        spTelefone.setVisible(false);
+        configurarSpEmail();
+        configurarSpTelefone();
         
-        if(tipoCadastro == TipoCadastro.EMPRESA){
+        
+        if(tipoCadastro == TipoCadastro.EMPRESA || tipoCadastro == TipoCadastro.CLIENTE){
             lbLogin.setVisible(false);
             lbSenha.setVisible(false);
             lbSenhaRepetida.setVisible(false);
@@ -61,21 +59,40 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
         }
     }
     
-    private void cadastroEmpresa(){
+    private void cadastroEmpresa(TipoCadastro tipoCadastro){
         
         if(!cadastrarInformacoes(false))
             return;
         
         CtrCadastroEmpresa.cadastroInfoBasica(
             tfNome.getText(), 
-            tfCpfCnpj.getText(), 
+            tfCpfCnpj.getText().replace(".", "").replace("/", "").replace("-", ""), 
             emails, 
             telefones
         );
         
         setVisible(false);
-        CadastroInfoEndereco cadastroEmpresa = new CadastroInfoEndereco(TipoCadastro.EMPRESA, cadastrarEmpresa);
+        CadastroInfoEndereco cadastroEmpresa = new CadastroInfoEndereco(tipoCadastro, cadastrarEmpresa);
         cadastroEmpresa.setVisible(true);
+    
+    }
+    
+    private void cadastroCliente(TipoCadastro tipoCadastro){
+        
+        if(!cadastrarInformacoes(false))
+            return;
+        
+        CtrCliente.cadastroInfoBasica(
+            tfNome.getText(), 
+            tfCpfCnpj.getText().replace(".", "").replace("/", "").replace("-", ""), 
+            emails, 
+            telefones
+        );
+        
+        setVisible(false);
+        CadastroInfoEndereco cadastroCliente = new CadastroInfoEndereco(tipoCadastro, false);
+        CtrInterfacesGraficas.setCadastroInfoEndereco(cadastroCliente);
+        cadastroCliente.setVisible(true);
     
     }
     
@@ -84,18 +101,23 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
         if(!cadastrarInformacoes(true))
             return;
         
-        CtrCadastroUsuario.cadastroInfoBasica(
+        String senha = new String(tfSenha.getPassword());
+        
+        CtrUsuario.cadastroInfoBasica(
             tfLogin.getText(), 
-            tfSenha.getPassword().toString(), 
+            senha, 
             tfNome.getText(), 
-            tfCpfCnpj.getText(), 
+            tfCpfCnpj.getText().replace(".", "").replace("/", "").replace("-", ""), 
             emails, 
             telefones, 
             tipoUsuario
         );
-        
+
         setVisible(false);
         CadastroInfoEndereco cadastroEndereco = new CadastroInfoEndereco(TipoCadastro.obterPorIndice(tipoUsuario.getIndice()), cadastrarEmpresa);
+        
+        CtrInterfacesGraficas.setCadastroInfoEndereco(cadastroEndereco);
+        
         cadastroEndereco.setVisible(true);
                 
     
@@ -128,8 +150,11 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
         tfLogin = new javax.swing.JTextField();
         tfSenha = new javax.swing.JPasswordField();
         tfSenhaRepetida = new javax.swing.JPasswordField();
-        lbUltimoEmail = new javax.swing.JLabel();
-        lbUltimoTelefone = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        spEmail = new javax.swing.JSpinner();
+        btEmailRemover = new javax.swing.JButton();
+        spTelefone = new javax.swing.JSpinner();
+        btTelefoneRemover = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -195,17 +220,38 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
             }
         });
 
-        lbUltimoEmail.setText("jLabel4");
-        lbUltimoEmail.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbUltimoEmailMouseClicked(evt);
+        jButton1.setText("Voltar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
             }
         });
 
-        lbUltimoTelefone.setText("jLabel4");
-        lbUltimoTelefone.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbUltimoTelefoneMouseClicked(evt);
+        spEmail.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                spEmailStateChanged(evt);
+            }
+        });
+
+        btEmailRemover.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        btEmailRemover.setText("-");
+        btEmailRemover.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btEmailRemoverActionPerformed(evt);
+            }
+        });
+
+        spTelefone.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                spTelefoneStateChanged(evt);
+            }
+        });
+
+        btTelefoneRemover.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        btTelefoneRemover.setText("-");
+        btTelefoneRemover.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btTelefoneRemoverActionPerformed(evt);
             }
         });
 
@@ -220,7 +266,9 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(275, 275, 275)
                 .addComponent(lbTitulo)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton1)
+                .addGap(19, 19, 19))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -240,20 +288,25 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
                                     .addComponent(jLabel2))
                                 .addGap(28, 28, 28)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(tfNome, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(tfCpfCnpj, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(tfEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(btEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(btEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btEmailRemover, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                         .addComponent(tfSenhaRepetida, javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(tfSenha, javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(tfLogin, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))))
+                                        .addComponent(tfLogin, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
+                                    .addComponent(tfNome, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel5)
                                 .addGap(91, 91, 91)
-                                .addComponent(tfTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(tfTelefone, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                    .addComponent(spEmail)
+                                    .addComponent(spTelefone))
                                 .addGap(18, 18, 18)
                                 .addComponent(rbFixo)
                                 .addGap(18, 18, 18)
@@ -261,19 +314,21 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(rbWhats)
                                 .addGap(18, 18, 18)
-                                .addComponent(btTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(lbUltimoEmail)
-                            .addComponent(lbUltimoTelefone))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(btTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btTelefoneRemover, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(52, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(9, 9, 9)
-                .addComponent(lbTitulo)
+                .addGap(8, 8, 8)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbTitulo)
+                    .addComponent(jButton1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel15)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbLogin)
                     .addComponent(tfLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -293,7 +348,7 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
                             .addComponent(lbSenhaRepetida)
                             .addComponent(tfSenhaRepetida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(35, 35, 35)))
-                .addGap(15, 15, 15)
+                .addGap(11, 11, 11)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(tfCpfCnpj, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -301,20 +356,22 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tfEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
-                    .addComponent(btEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btEmailRemover, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lbUltimoEmail)
-                .addGap(9, 9, 9)
+                .addComponent(spEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(4, 4, 4)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tfTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
                     .addComponent(rbFixo)
                     .addComponent(rbMovel)
                     .addComponent(rbWhats)
-                    .addComponent(btTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btTelefoneRemover, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbUltimoTelefone)
-                .addGap(66, 66, 66)
+                .addComponent(spTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(56, 56, 56)
                 .addComponent(btProximo)
                 .addGap(14, 14, 14))
         );
@@ -327,34 +384,21 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
     }//GEN-LAST:event_rbFixoActionPerformed
 
     private void btTelefoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btTelefoneActionPerformed
-
-        if(!adicionarTelefone())
-            return;
-        
-        tfTelefone.setText("");
-        lbUltimoTelefone.setText("QTD Telefones: " + telefones.size() + "; " + telefones.get(telefones.size() -1).getNumero() + " X ");
-        lbUltimoTelefone.setVisible(true);
+        spTelefone.setVisible(true);
+        adicionarTelefone();   
     }//GEN-LAST:event_btTelefoneActionPerformed
 
     private void btEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEmailActionPerformed
-        String email = tfEmail.getText().trim();
-        
-        if(email.contentEquals(""))
-            return;
-        
-        if(!adicionarEmail())
-            return;
-        
-        tfEmail.setText("");
-        lbUltimoEmail.setText("QTD Emails: " + emails.size() + "; " + email + " X ");
-        lbUltimoEmail.setVisible(true);
+        spEmail.setVisible(true);
+        adicionarEmail();
+
     }//GEN-LAST:event_btEmailActionPerformed
 
     private void btProximoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btProximoActionPerformed
 
         switch (tipoCadastro) {
             case EMPRESA:
-                cadastroEmpresa();
+                cadastroEmpresa(TipoCadastro.EMPRESA);
                 break;
                 
             case ADMIN:
@@ -366,8 +410,7 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
                 break;
                 
             case CLIENTE:
-                
-                System.out.println("Cadastro de Cliente");
+                cadastroCliente(TipoCadastro.CLIENTE);
                 break;
                 
             default:
@@ -382,37 +425,93 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_tfSenhaActionPerformed
 
-    private void lbUltimoTelefoneMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbUltimoTelefoneMouseClicked
-        int ultimaPos = telefones.size() - 1;
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        setVisible(false);
         
-        telefones.remove(ultimaPos);
-        
-        if(telefones.size() == 0){
-            lbUltimoTelefone.setVisible(false);
-            return;
+        if(CtrInterfacesGraficas.getMenuCadastros() != null){
+            MenuCadastros menu = CtrInterfacesGraficas.getMenuCadastros();
+            menu.setVisible(true);
         }
-        
-        lbUltimoTelefone.setText(telefones.get(ultimaPos - 1).getNumero() + " X ");
-    }//GEN-LAST:event_lbUltimoTelefoneMouseClicked
+        else{
+            Login login = new Login();
+            login.setVisible(true);
+        }
+            
+    }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void lbUltimoEmailMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbUltimoEmailMouseClicked
-        int ultimaPos = emails.size() - 1;
+    private void spEmailStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spEmailStateChanged
+        String email = (String) spEmail.getValue();
+        tfEmail.setText(email.contentEquals("Novo email") ? "" : email);
+    }//GEN-LAST:event_spEmailStateChanged
+
+    private void btEmailRemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEmailRemoverActionPerformed
+        String email = tfEmail.getText().trim();
         
-        emails.remove(ultimaPos);
+        if(email.contentEquals(""))
+            return;
         
-        if(emails.size() == 0){
-            lbUltimoEmail.setVisible(false);
+        for(String e : emails){
+            if(e.contentEquals(email)){
+                emails.remove(e);
+                break;
+            }
+        }
+        configurarSpEmail();
+        spEmail.setValue("Novo email");
+       
+    }//GEN-LAST:event_btEmailRemoverActionPerformed
+
+    private void spTelefoneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spTelefoneStateChanged
+        String numero = (String) spTelefone.getValue();
+        
+        if(numero.contentEquals("Novo número")){
+            tfTelefone.setText("");
             return;
         }
+        Telefone trocarTelefone = null;
+                
+        for(Telefone telefone : telefones){
+            if(telefone.getNumero().contentEquals(numero)){
+                trocarTelefone = telefone;
+                break;
+            }
+        }
         
-        lbUltimoEmail.setText(emails.get(ultimaPos - 1) + " X ");
-    }//GEN-LAST:event_lbUltimoEmailMouseClicked
+        if(trocarTelefone == null)
+            return;
+        
+        tfTelefone.setText(trocarTelefone.getNumero());
+        rbFixo.setSelected(trocarTelefone.getTipo() == TipoTelefone.FIXO);
+        rbMovel.setSelected(trocarTelefone.getTipo() == TipoTelefone.MOVEL);
+        rbWhats.setSelected(trocarTelefone.temWhats());
+        
+    }//GEN-LAST:event_spTelefoneStateChanged
+
+    private void btTelefoneRemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btTelefoneRemoverActionPerformed
+        String numero = tfTelefone.getText();
+        
+        if(numero.contentEquals(""))
+            return;
+        
+        for(Telefone telefone : telefones){
+            if(telefone.getNumero().contentEquals(numero)){
+                telefones.remove(telefone);
+                break;
+            }
+        }
+        
+        tfTelefone.setText("");
+        spTelefone.setValue("Novo número");
+    }//GEN-LAST:event_btTelefoneRemoverActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btEmail;
+    private javax.swing.JButton btEmailRemover;
     private javax.swing.JButton btProximo;
     private javax.swing.JButton btTelefone;
+    private javax.swing.JButton btTelefoneRemover;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
@@ -422,11 +521,11 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
     private javax.swing.JLabel lbSenha;
     private javax.swing.JLabel lbSenhaRepetida;
     private javax.swing.JLabel lbTitulo;
-    private javax.swing.JLabel lbUltimoEmail;
-    private javax.swing.JLabel lbUltimoTelefone;
     private javax.swing.JRadioButton rbFixo;
     private javax.swing.JRadioButton rbMovel;
     private javax.swing.JRadioButton rbWhats;
+    private javax.swing.JSpinner spEmail;
+    private javax.swing.JSpinner spTelefone;
     private javax.swing.JTextField tfCpfCnpj;
     private javax.swing.JTextField tfEmail;
     private javax.swing.JTextField tfLogin;
@@ -448,6 +547,13 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
             return false;
         }
         
+        for(Telefone tel : telefones){
+            if(tel.getNumero().contentEquals(numero)){
+                Biblioteca.exibirAlerta("Número já inserido");
+                return false;
+            }
+        }
+        
         TipoTelefone tipoTelefone = rbMovel.isSelected() ? TipoTelefone.MOVEL : TipoTelefone.FIXO;
         
         Telefone telefone = new Telefone(
@@ -458,6 +564,9 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
         
         telefones.add(telefone);
         
+        tfTelefone.setText("");
+        configurarSpTelefone();
+        
         return true;
     }
 
@@ -466,7 +575,7 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
         String nome = tfNome.getText();
         String cpfCnpj = tfCpfCnpj.getText();
         String numero = tfTelefone.getText();
-        String email = tfEmail.getText();
+        String email = tfEmail.getText().trim();
         
         if(verificarSenha){
             String login = tfLogin.getText();
@@ -515,7 +624,7 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
     }
 
     private boolean adicionarEmail() {
-        String email = tfEmail.getText();
+        String email = tfEmail.getText().trim();
         
         if(email.contentEquals(""))
             return true;
@@ -527,6 +636,8 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
         
         emails.add(email);
         
+        configurarSpEmail();
+        tfEmail.setText("");
         return true;
     }
     
@@ -611,6 +722,22 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
         
         // Verifica se os dígitos verificadores são iguais aos dígitos informados
         return cnpj.substring(12).equals(String.valueOf(digito1) + String.valueOf(digito2));
+    }
+
+    private void configurarSpEmail() {
+        ArrayList<String> emailsSp = new ArrayList<>();
+        emailsSp.add("Novo email");
+        emailsSp.addAll(emails);
+        spEmail.setModel(new SpinnerListModel(emailsSp));
+    }
+    
+    private void configurarSpTelefone() {
+        ArrayList<String> numeros = new ArrayList<>();
+        numeros.add("Novo número");
+        for(Telefone t: telefones)
+            numeros.add(t.getNumero());
+        
+        spTelefone.setModel(new SpinnerListModel(numeros));
     }
 }
 

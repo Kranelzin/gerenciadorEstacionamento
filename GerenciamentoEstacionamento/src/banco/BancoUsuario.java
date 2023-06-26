@@ -12,7 +12,7 @@ import objetos.Telefone;
  *
  * @author marce
  */
-public class CadastrarUsuario {
+public class BancoUsuario {
     
     public static void inerirNovoUsuario(
             Conexao con, 

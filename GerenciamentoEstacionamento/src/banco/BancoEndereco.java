@@ -23,7 +23,7 @@ import objetos.Endereco;
  *
  * @author marce
  */
-public class BuscarEndereco {
+public class BancoEndereco {
     
     public static CidadeEstado buscarCidadeEstado(String cidade, String uf){
 
