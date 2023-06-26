@@ -1,0 +1,10 @@
+.append("SELECT ")
+.append("  CODIGO, ")
+.append("  VAGA, ")
+.append("  RESERVADA, ")
+.append("  EM_USO, ")
+.append("  DATA_HORA_ULT_ENTRADA, ")
+.append("  DATA_HORA_ULT_SAIDA ")
+.append("FROM BOX_VAGA ")
+
+.append("WHERE EMPRESA_ID = ? ")

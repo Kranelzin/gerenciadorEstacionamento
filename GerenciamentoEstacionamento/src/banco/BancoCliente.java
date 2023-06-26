@@ -4,12 +4,14 @@ import banco.comandos.Conexao;
 import banco.comandos.Consulta;
 import banco.comandos.Insert;
 import banco.comandos.Update;
+import enums.Meses;
 import enums.TipoUsuario;
 import java.util.ArrayList;
 import objetos.BoxVaga;
 import objetos.Cliente;
 import objetos.Endereco;
 import objetos.Mensalidade;
+import objetos.PagamentoMensalidade;
 import objetos.Telefone;
 import objetos.Veiculo;
 
@@ -31,10 +33,10 @@ public class BancoCliente {
             ArrayList<Veiculo> veiculos
     ){
     
-        int usuarioId = inerirUsuario(con, empresaId, tipoUsuario, nome, cpfCnpj);
-        inserirEmails(con, usuarioId, emails);
-        inserirEnderecos(con, usuarioId, enderecos);
-        inserirTelefones(con, usuarioId, telefones);
+        int usuarioId = BancoUsuario.inerirUsuario(con, empresaId, tipoUsuario, nome, cpfCnpj);
+        BancoUsuario.inserirEmails(con, usuarioId, emails);
+        BancoUsuario.inserirEnderecos(con, usuarioId, enderecos);
+        BancoUsuario.inserirTelefones(con, usuarioId, telefones);
         inserirVeiculoUsuario(con, usuarioId, veiculos);
         
         Cliente cliente = new Cliente(
@@ -51,207 +53,7 @@ public class BancoCliente {
         return cliente;
     }
     
-    private static int inerirUsuario(
-        Conexao con, 
-        int empresaId,
-        TipoUsuario tipoUsuario,
-        String nome, 
-        String cpfCnpj
-    ){
-        Insert insert = con.novoInsert();
-        
-        StringBuilder sql = new StringBuilder();
-        
-        sql
-        .append("INSERT INTO USUARIO ( ")
-        .append("  EMPRESA_ID, ")
-        .append("  TIPO, ")
-        .append("  NOME, ")
-        .append("  CPF_CNPJ ")
-        .append(") ")
-        .append("VALUES ( ")
-        .append("  ?, ")
-        .append("  ?, ")
-        .append("  ?, ")
-        .append("  ? ")
-        .append(") ");
-    
-        insert.setSql(sql.toString());
-        insert.executarComando(new Object[]{empresaId, tipoUsuario.getIndice(), nome, cpfCnpj});
-        
-        int usuarioId = insert.getRetornoInsert();
-    
-        return usuarioId;
-    }
-
-    private static void inserirTelefones(Conexao con, int usuarioId, ArrayList<Telefone> telefones) {
-        
-        Insert insert = con.novoInsert();
-        
-        StringBuilder sql = new StringBuilder();
-        
-        sql
-        .append("INSERT INTO TELEFONE ( ")
-        .append("  NUMERO, ")
-        .append("  TIPO, ")
-        .append("  TEM_WHATS ")
-        .append(") ")
-        .append("VALUES ( ")
-        .append("  ?, ")
-        .append("  ?, ")
-        .append("  ? ")
-        .append(") ");
-    
-        insert.setSql(sql.toString());
-        
-        for(Telefone telefone : telefones){
-            insert.executarComando(new Object[]{telefone.getNumero(), telefone.getTipo().getIndice(), telefone.temWhats()});
-            int telefoneId = insert.getRetornoInsert();
-            
-            inserirTelefoneUsuario(con, usuarioId, telefoneId);
-            
-        }
-        
-    }
-
-    private static void inserirTelefoneUsuario(Conexao con, int usuarioId, int telefoneId) {
-        Insert insert = con.novoInsert();
-        
-        StringBuilder sql = new StringBuilder();
-        
-        sql
-        .append("INSERT INTO TELEFONE_USUARIO ( ")
-        .append("  TELEFONE_ID, ")
-        .append("  USUARIO_ID ")
-        .append(") ")
-        .append("VALUES ( ")
-        .append("  ?, ")
-        .append("  ? ")
-        .append(") ");
-    
-        insert.setSql(sql.toString());
-        
-        insert.executarComando(new Object[]{telefoneId, usuarioId});
-        
-    }
-
-    private static void inserirEmails(Conexao con, int usuarioId, ArrayList<String> emails) {
-        int emailId = 0;
-        
-        Insert insert = con.novoInsert();
-        
-        StringBuilder sql = new StringBuilder();
-        
-        sql
-        .append("INSERT INTO EMAIL ( ")
-        .append("  EMAIL ")
-        .append(") ")
-        .append("VALUES ( ")
-        .append("  ? ")
-        .append(") ");
-    
-        insert.setSql(sql.toString());
-        
-        for(String email : emails){
-            insert.executarComando(new Object[]{email});
-            emailId = insert.getRetornoInsert();
-            
-            inserirEmailUsuario(con, usuarioId, emailId);
-            
-        }
-    }
-
-    private static void inserirEmailUsuario(Conexao con, int usuarioId, int emailId) {
-        Insert insert = con.novoInsert();
-        
-        StringBuilder sql = new StringBuilder();
-        
-        sql
-        .append("INSERT INTO EMAIL_USUARIO ( ")
-        .append("  EMAIL_ID, ")
-        .append("  USUARIO_ID ")
-        .append(") ")
-        .append("VALUES ( ")
-        .append("  ?, ")
-        .append("  ? ")
-        .append(") ");
-    
-        insert.setSql(sql.toString());
-        
-        insert.executarComando(new Object[]{emailId, usuarioId});
-    }
-
-    private static void inserirEnderecos(Conexao con, int usuarioId, ArrayList<Endereco> enderecos) {
-        Insert insert = con.novoInsert();
-        
-        StringBuilder sql = new StringBuilder();
-        
-        sql
-        .append("INSERT INTO ENDERECO ( ")
-        .append("  TIPO, ")
-        .append("  CEP, ")
-        .append("  LOGRADOURO, ")
-        .append("  NUMERO, ")
-        .append("  COMPLEMENTO, ")
-        .append("  BAIRRO, ")
-        .append("  CIDADE_ID, ")
-        .append("  ESTADO_ID ")
-        .append(") ")
-        .append("VALUES ( ")
-        .append("  ?, ")
-        .append("  ?, ")
-        .append("  ?, ")
-        .append("  ?, ")
-        .append("  ?, ")
-        .append("  ?, ")
-        .append("  ?, ")
-        .append("  ? ")
-        .append(") ");
-    
-        insert.setSql(sql.toString());
-        
-        for(Endereco endereco : enderecos){
-            insert.executarComando(
-                new Object[]{
-                    endereco.getTipo().getIndice(), 
-                    endereco.getCep(), 
-                    endereco.getLogradouro(),
-                    endereco.getNumero(),
-                    endereco.getComplemento(),
-                    endereco.getBairro(),
-                    endereco.getCidadeEstado().getCidadeId(),
-                    endereco.getCidadeEstado().getEstado().getIndice()
-                }
-            );
-            
-            int enderecoId = insert.getRetornoInsert();
-            
-            inserirEnderecoUsuario(con, usuarioId, enderecoId);
-            
-        }
-    }
-
-    private static void inserirEnderecoUsuario(Conexao con, int usuarioId, int enderecoId) {
-        Insert insert = con.novoInsert();
-        
-        StringBuilder sql = new StringBuilder();
-        
-        sql
-        .append("INSERT INTO ENDERECO_USUARIO ( ")
-        .append("  ENDERECO_ID, ")
-        .append("  USUARIO_ID ")
-        .append(") ")
-        .append("VALUES ( ")
-        .append("  ?, ")
-        .append("  ? ")
-        .append(") ");
-    
-        insert.setSql(sql.toString());
-        
-        insert.executarComando(new Object[]{enderecoId, usuarioId});
-    }
-
-    private static int inserirVeiculo(Conexao con, Veiculo veiculo) {
+    private static int buscarVeiculo(Conexao con, Veiculo veiculo) {
         
         int veiculoId = 0;
         
@@ -329,7 +131,7 @@ public class BancoCliente {
         insert.setSql(sql.toString());
         
         for(Veiculo veiculo : veiculos){
-            int veiculoId = inserirVeiculo(con, veiculo);
+            int veiculoId = buscarVeiculo(con, veiculo);
             
             insert.executarComando(new Object[]{veiculoId, usuarioId, veiculo.getPlaca()});
         }
@@ -382,4 +184,277 @@ public class BancoCliente {
         }
         
     }
+
+    public static Cliente buscarCliente(Conexao con, String nomeCliente) {
+        
+        Cliente cliente = null;
+        int usuarioId = -1;
+        int empresaId = -1;
+        String nome = "";
+        String cpfCnpj = "";
+        
+        Consulta consulta = con.novaConsulta();
+        
+        StringBuilder sql = new StringBuilder();
+        
+        sql
+        .append("SELECT ")
+        .append("  USUARIO_ID, ")
+        .append("  NOME, ")
+        .append("  CPF_CNPJ, ")
+        .append("  EMPRESA_ID ")
+        .append("FROM USUARIO ")
+        .append("WHERE NOME = ? ");
+        
+        consulta.setSql(sql.toString());
+        
+        consulta.executarComando(new Object[]{});
+        
+        while(!consulta.fimConsulta()){
+
+            usuarioId = consulta.getInt("USUARIO_ID");
+            nome = consulta.getString("NOME");
+            cpfCnpj = consulta.getString("CPF_CNPJ");
+
+        }
+        
+        if(usuarioId == -1)
+            return null;
+        
+        ArrayList<String> emails = BancoUsuario.buscarEmailsUsuario(con, usuarioId);
+        ArrayList<Telefone> telefones = BancoUsuario.buscarTelefonesUsuario(con, usuarioId);
+        ArrayList<Endereco> enderecos = BancoUsuario.buscarEnderecosUsuario(con, usuarioId);
+        ArrayList<Veiculo>  veiculos = buscarVeiculos(con, usuarioId);
+        ArrayList<BoxVaga> boxVagas = buscarBoxVaga(con, usuarioId);
+        Mensalidade mensalidade = buscarMensalidade(con, usuarioId);
+        
+        cliente = new Cliente(
+            usuarioId,
+            nome,
+            cpfCnpj,
+            emails,
+            enderecos,
+            telefones,
+            veiculos,
+            empresaId
+        );
+        
+        if(mensalidade != null)
+            cliente.cadastrarPagamentoMensal(mensalidade, boxVagas);
+
+        return cliente;
+    }
+
+    private static ArrayList<Veiculo> buscarVeiculos(Conexao con, int usuarioId) {
+        
+        ArrayList<Veiculo> veiculos = new ArrayList<>();
+        
+        Consulta consulta = con.novaConsulta();
+        
+        StringBuilder sql = new StringBuilder();
+        
+        sql
+        .append("SELECT ")
+        .append("  VEU.PLACA, ")
+        .append("  VEI.MODELO, ")
+        .append("  VEI.MARCA ")
+
+        .append("FROM VEICULO_USUARIO VEU ")
+                
+        .append("INNER JOIN VEICULO VEI ")
+        .append("ON VEU.VEICULO_ID = VEI.VEICULO_ID ")
+        
+        .append("WHERE VEU.USUARIO_ID = ? ");
+        
+        consulta.setSql(sql.toString());
+
+        consulta.executarComando(new Object[]{usuarioId});
+
+        while(!consulta.fimConsulta()){
+            Veiculo veiculo = new Veiculo(
+                consulta.getString("PLACA"),
+                consulta.getString("MODELO"),
+                consulta.getString("MARCA")
+            );
+            
+            veiculos.add(veiculo);
+        }
+        
+        return veiculos;
+    }
+
+    private static Mensalidade buscarMensalidade(Conexao con, int usuarioId) {
+        
+        Mensalidade mensalidade = null;
+        
+        ArrayList<PagamentoMensalidade> pagamentosMensalidade = new ArrayList<>();
+        
+        Consulta consulta = con.novaConsulta();
+        
+        StringBuilder sql = new StringBuilder();
+        
+        sql
+        .append("SELECT ")
+        .append("  MENSALIDADE_ID, ")
+        .append("  DIA_VENCIMENTO, ")
+        .append("  DATA_INICIO, ")
+        .append("  VALOR_MENSALIDADE ")
+
+        .append("FROM MENSALIDADE ")
+                
+        .append("WHERE USUARIO_ID = ? ")
+        .append("AND DATA_FIM IS NULL ");
+        
+        consulta.setSql(sql.toString());
+
+        consulta.executarComando(new Object[]{usuarioId});
+
+        while(!consulta.fimConsulta()){
+            int mensalidadeId = consulta.getInt("MENSALIDADE_ID");
+            
+            mensalidade = new Mensalidade(
+                    consulta.getInt("DIA_VECIMENTO"),
+                    consulta.getDate("DATA_INICIO"),
+                    consulta.getBigDecimal("VALOR_MENSALIDE")
+            
+            );
+            
+            pagamentosMensalidade = buscarPagamentosMensalidade(con, mensalidadeId);
+            
+            if(pagamentosMensalidade.size() > 0)
+                mensalidade.setPagamentosRealizados(pagamentosMensalidade);
+        }
+        
+        return mensalidade;
+    }
+
+    private static ArrayList<PagamentoMensalidade> buscarPagamentosMensalidade(Conexao con, int mensalidadeId) {
+        
+        ArrayList<PagamentoMensalidade> pagamentosMensalidade = new ArrayList<>();
+        
+        Consulta consulta = con.novaConsulta();
+        
+        StringBuilder sql = new StringBuilder();
+        
+        sql
+        .append("SELECT ")
+        .append("  PAM.MES_REFERENCIA, ")
+        .append("  PAM.ANO_REFERECIA, ")
+        .append("  PAG.VALOR, ")
+        .append("  PAG.DATA_PAGAMENTO ")
+                
+        .append("FROM PAGAMENTO_MENSALIDADE PAM ")
+                
+        .append("INNER JOIN PAGAMENTO PAG ")
+        .append("ON PAM.PAGAMENTO_ID = PAG.PAGAMENTO_ID ")
+                
+        .append("WHERE PAM.MENSALIDADE_ID = ? ");
+        
+        consulta.setSql(sql.toString());
+
+        consulta.executarComando(new Object[]{mensalidadeId});
+
+        while(!consulta.fimConsulta()){
+            
+            PagamentoMensalidade pagamento = new PagamentoMensalidade(
+                consulta.getBigDecimal("VALOR"),
+                consulta.getDate("DATA_PAGAMENTO"),
+                Meses.obterPorIndice(consulta.getInt("MES_REFERENCIA")),
+                consulta.getInt("ANO_REFERENCIA")
+            );
+            
+            pagamentosMensalidade.add(pagamento);
+        
+        }
+        
+        return pagamentosMensalidade;
+    }
+
+    private static ArrayList<BoxVaga> buscarBoxVaga(Conexao con, int usuarioId) {
+        
+        ArrayList<BoxVaga> boxVagas = new ArrayList<>();
+        
+        Veiculo veiculo = null;
+        
+        Consulta consulta = con.novaConsulta();
+        
+        StringBuilder sql = new StringBuilder();
+        
+        sql
+        .append("SELECT ")
+        .append("  CODIGO, ")
+        .append("  VAGA, ")
+        .append("  VEICULO_USUARIO_ID, ")
+        .append("  DATA_HORA_ULT_ENTRADA AS HORA_ENTRADA, ")
+        .append("  DATA_HORA_ULT_SAIDA AS HORA SAIDA")
+
+        .append("FROM MENSALIDADE ")
+                
+        .append("WHERE USUARIO_ID = ? ")
+        .append("AND DATA_FIM IS NULL ");
+        
+        consulta.setSql(sql.toString());
+
+        consulta.executarComando(new Object[]{usuarioId});
+
+        while(!consulta.fimConsulta()){
+            
+            int veiculoUsuarioId = consulta.getInt("VEICULO_USUARIO_ID");
+            
+            if(veiculoUsuarioId != 0)
+                veiculo = buscarVeiculoUsuario(con, usuarioId);
+            
+            BoxVaga boxVaga = new BoxVaga(
+                consulta.getString("CODIGO"),
+                consulta.getInt("VAGA"),
+                consulta.getTimestamp("HORA_ENTRADA"),
+                consulta.getTimestamp("HORA_SAIDA"),
+                consulta.getBoolean("RESERVADA"),
+                veiculo
+            );
+            
+            boxVagas.add(boxVaga);
+        }
+        
+        return boxVagas;
+    }
+
+    private static Veiculo buscarVeiculoUsuario(Conexao con, int veiculoUsuarioId) {
+        
+        Veiculo veiculo = null;
+        
+        Consulta consulta = con.novaConsulta();
+        
+        StringBuilder sql = new StringBuilder();
+        
+        sql
+        .append("SELECT ")
+        .append("  VEU.PLACA, ")
+        .append("  VEI.MODELO, ")
+        .append("  VEI.MARCA ")
+
+        .append("FROM VEICULO_USUARIO VEU ")
+                
+        .append("INNER JOIN VEICULO VEI ")
+        .append("ON VEU.VEICULO_ID = VEI.VEICULO_ID ")
+        
+        .append("WHERE VEU.VEICULO_USUARIO_ID = ? ");
+        
+        consulta.setSql(sql.toString());
+
+        consulta.executarComando(new Object[]{veiculoUsuarioId});
+
+        while(!consulta.fimConsulta()){
+            veiculo = new Veiculo(
+                consulta.getString("PLACA"),
+                consulta.getString("MODELO"),
+                consulta.getString("MARCA")
+            );
+        
+        }
+        
+        return veiculo;
+    }
+
+
 }

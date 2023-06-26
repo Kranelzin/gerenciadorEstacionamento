@@ -15,7 +15,7 @@ public class Usuario {
     private final String cpfCnpj;
     private final ArrayList<String> emails;
     private final ArrayList<Endereco> endereco;
-    private final ArrayList<Telefone> telefone;
+    private final ArrayList<Telefone> telefones;
     private final int empresaId;
     
     
@@ -26,7 +26,7 @@ public class Usuario {
         String cpfCnpj, 
         ArrayList<String> emails,
         ArrayList<Endereco> endereco, 
-        ArrayList<Telefone> telefone,
+        ArrayList<Telefone> telefones,
         int empresaId
     ) {
         this.usuarioId = usuarioId;
@@ -35,7 +35,7 @@ public class Usuario {
         this.cpfCnpj = cpfCnpj;
         this.emails = emails;
         this.endereco = endereco;
-        this.telefone = telefone;
+        this.telefones = telefones;
         this.empresaId = empresaId;
     }
 
@@ -63,8 +63,8 @@ public class Usuario {
         return endereco;
     }
 
-    public ArrayList<Telefone> getTelefone() {
-        return telefone;
+    public ArrayList<Telefone> getTelefones() {
+        return telefones;
     }
     
     

@@ -11,7 +11,9 @@ import enums.TipoUsuario;
 import interfaceGrafica.Login;
 import java.util.ArrayList;
 import javax.swing.SpinnerListModel;
+import objetos.Cliente;
 import objetos.Telefone;
+import objetos.UsuarioLogin;
 
 /**
  *
@@ -23,19 +25,24 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
     private ArrayList<String> emails = new ArrayList<>();
     private ArrayList<Telefone> telefones = new ArrayList<>();
     private boolean cadastrarEmpresa = false;
+    private boolean update = false;
     
-     public CadastroInfoBasica(TipoCadastro tipoCadastro, boolean cadastrarEmpresa){
+     public CadastroInfoBasica(TipoCadastro tipoCadastro, boolean cadastrarEmpresa, boolean update){
         this.tipoCadastro = tipoCadastro;
         this.cadastrarEmpresa = cadastrarEmpresa;
+        this.update= update;
         iniciarComponentes();
         
+        if(update)
+            preencherInformacoes();
+        
      }
-    
+     
     public CadastroInfoBasica(TipoCadastro tipoCadastro) {
         this.tipoCadastro = tipoCadastro;
         iniciarComponentes();
     }
-    
+
     private void iniciarComponentes(){
         
         initComponents();
@@ -72,7 +79,7 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
         );
         
         setVisible(false);
-        CadastroInfoEndereco cadastroEmpresa = new CadastroInfoEndereco(tipoCadastro, cadastrarEmpresa);
+        CadastroInfoEndereco cadastroEmpresa = new CadastroInfoEndereco(tipoCadastro, cadastrarEmpresa, update);
         cadastroEmpresa.setVisible(true);
     
     }
@@ -90,7 +97,7 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
         );
         
         setVisible(false);
-        CadastroInfoEndereco cadastroCliente = new CadastroInfoEndereco(tipoCadastro, false);
+        CadastroInfoEndereco cadastroCliente = new CadastroInfoEndereco(tipoCadastro, false, update);
         CtrInterfacesGraficas.setCadastroInfoEndereco(cadastroCliente);
         cadastroCliente.setVisible(true);
     
@@ -112,9 +119,10 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
             telefones, 
             tipoUsuario
         );
+        
 
         setVisible(false);
-        CadastroInfoEndereco cadastroEndereco = new CadastroInfoEndereco(TipoCadastro.obterPorIndice(tipoUsuario.getIndice()), cadastrarEmpresa);
+        CadastroInfoEndereco cadastroEndereco = new CadastroInfoEndereco(TipoCadastro.obterPorIndice(tipoUsuario.getIndice()), cadastrarEmpresa, update);
         
         CtrInterfacesGraficas.setCadastroInfoEndereco(cadastroEndereco);
         
@@ -738,6 +746,43 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
             numeros.add(t.getNumero());
         
         spTelefone.setModel(new SpinnerListModel(numeros));
+    }
+
+    private void preencherInformacoes() {
+        switch(tipoCadastro){
+            case CLIENTE:
+                Cliente cliente = CtrCliente.getCliente();
+                tfNome.setText(cliente.getNomeUsuario());
+                tfCpfCnpj.setText(cliente.getCpfCnpj());
+                emails = cliente.getEmails();
+                telefones = cliente.getTelefones();
+                break;
+            case ADMIN:
+                UsuarioLogin admin = CtrUsuario.getUsuarioLogin();
+                tfLogin.setText(admin.getLogin());
+                tfSenha.setText(admin.getSenha());
+                tfSenhaRepetida.setText(admin.getSenha());
+                tfNome.setText(admin.getNomeUsuario());
+                tfCpfCnpj.setText(admin.getCpfCnpj());
+                emails = admin.getEmails();
+                telefones = admin.getTelefones();
+                break;
+                
+            case FUNCIONARIO:
+                UsuarioLogin Funcionario = CtrUsuario.getUsuarioLogin();
+                tfLogin.setText(Funcionario.getLogin());
+                tfSenha.setText(Funcionario.getSenha());
+                tfSenhaRepetida.setText(Funcionario.getSenha());
+                tfNome.setText(Funcionario.getNomeUsuario());
+                tfCpfCnpj.setText(Funcionario.getCpfCnpj());
+                emails = Funcionario.getEmails();
+                telefones = Funcionario.getTelefones();
+                break;
+            default:
+                break;
+        }
+        
+        
     }
 }
 

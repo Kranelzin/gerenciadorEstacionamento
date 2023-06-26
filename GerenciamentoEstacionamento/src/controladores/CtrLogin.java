@@ -1,6 +1,6 @@
 package controladores;
 
-import banco.Logar;
+import banco.BancoUsuario;
 import banco.comandos.Conexao;
 import objetos.Empresa;
 import objetos.UsuarioLogin;
@@ -18,23 +18,26 @@ public class CtrLogin {
         Conexao con = new Conexao();
         con.abrirConexao(true);
         
-        boolean retorno = Logar.validarLogin(con, login, senha);
+        int usuarioId = BancoUsuario.validarLogin(con, login, senha);
+        
+        boolean retorno = usuarioId != -1;
         
         if(retorno)
-            setUsuarioLogin(con);
+            setUsuarioLogin(con, usuarioId);
         
         con.fecharConexao();
         return retorno;
     }
     
-    private static void setUsuarioLogin(Conexao con){
-        usuarioLogado = Logar.getUsuarioLogin(con);
-        setEmpresa(con);
+    private static void setUsuarioLogin(Conexao con, int usuarioId){
+        
+        usuarioLogado = BancoUsuario.getUsuarioLogin(con, usuarioId);
+        setEmpresa(con, usuarioLogado.getUsuarioId(), usuarioLogado.getEmpresaId());
         CtrBoxVaga.setBoxVagas(con, empresa.getEmpresaId());
     }
     
-    private static void setEmpresa(Conexao con){
-        empresa = Logar.getEmpresaUsuario(con);
+    private static void setEmpresa(Conexao con, int usuarioId, int empresaId){
+        empresa = BancoUsuario.getEmpresaUsuario(con, usuarioId, empresaId);
     }
     
     public static Empresa getEmpresa(){

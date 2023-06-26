@@ -6,6 +6,7 @@ import exceptions.BancoException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  *
@@ -65,6 +66,10 @@ public class Consulta extends SqlComandosRetorno{
         return getValor(nomeColuna, Timestamp.class);
     }
 
+    public Date getDate(String nomeColuna) {
+        return getValor(nomeColuna, Date.class);
+    }
+    
     private <Generico> Generico getValor(String nomeColuna, Class<Generico> tipoDado) {
         if (pos == -1) {
             throw new BancoException("Loop de consulta não iniciado, usar while(!fimConsulta()) para obter dados");

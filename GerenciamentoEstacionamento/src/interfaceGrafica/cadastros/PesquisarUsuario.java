@@ -1,14 +1,21 @@
 package interfaceGrafica.cadastros;
 
+import Repositorio.Biblioteca;
+import controladores.CtrCliente;
 import controladores.CtrInterfacesGraficas;
-import java.text.ParseException;
+import enums.TipoCadastro;
+import enums.TipoUsuario;
+import objetos.Cliente;
 /**
  *
  * @author marce
  */
 public class PesquisarUsuario extends javax.swing.JFrame {
     
-    public PesquisarUsuario() throws ParseException {
+    private TipoUsuario tipoUsuario;
+    
+    public PesquisarUsuario(TipoUsuario tipoUsuario){
+        this.tipoUsuario = tipoUsuario;
         initComponents();
         setLocationRelativeTo(null);
     }
@@ -122,6 +129,21 @@ public class PesquisarUsuario extends javax.swing.JFrame {
 
     private void btPesquisaClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btPesquisaClienteActionPerformed
         String nomeCliente = tfPesquisaCliente.getText();
+        
+        switch(tipoUsuario){
+            case CLIENTE:
+                Cliente cliente = CtrCliente.buscarCliente(nomeCliente);
+        
+                if(cliente == null){
+                    Biblioteca.exibirAlerta("Cliente não encontrado");
+                    return;
+                }
+            
+                CadastroInfoBasica cadastroCliente = new CadastroInfoBasica(TipoCadastro.CLIENTE, false, true);
+                break;
+        }
+        
+        
         
     }//GEN-LAST:event_btPesquisaClienteActionPerformed
 

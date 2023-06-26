@@ -24,10 +24,12 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
     private TipoCadastro tipoCadastro;
     private ArrayList<Endereco> enderecos = new ArrayList<>();
     private boolean cadastrarEmpresa = false;
+    private boolean update = false;
     
-    public CadastroInfoEndereco(TipoCadastro tipoCadastro, boolean cadastrarEmpresa) {
+    public CadastroInfoEndereco(TipoCadastro tipoCadastro, boolean cadastrarEmpresa, boolean update) {
         this.tipoCadastro = tipoCadastro;
         this.cadastrarEmpresa = cadastrarEmpresa;
+        this.update = update;
         initComponents();
         configurarSpinnerUf();
         rbResidencial.setSelected(true);
@@ -393,7 +395,7 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
                 try{
                     CtrCadastroEmpresa.cadastroInfoEndereco(enderecos);
                     setVisible(false);
-                    CadastroInfoBasica cadastro = new CadastroInfoBasica(TipoCadastro.ADMIN, true);
+                    CadastroInfoBasica cadastro = new CadastroInfoBasica(TipoCadastro.ADMIN, true, false);
                     CtrInterfacesGraficas.setCadastroInfoBasica(cadastro);
                     cadastro.setVisible(true);
 

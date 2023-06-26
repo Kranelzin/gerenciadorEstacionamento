@@ -6,6 +6,7 @@ import enums.TipoUsuario;
 import java.util.ArrayList;
 import objetos.Endereco;
 import objetos.Telefone;
+import objetos.UsuarioLogin;
 
 /**
  *
@@ -13,6 +14,7 @@ import objetos.Telefone;
  */
 public class CtrUsuario {
     
+    private static UsuarioLogin usuarioLogin;
     private static String login;
     private static String senha;
     private static TipoUsuario tipoUsuario;
@@ -60,6 +62,19 @@ public class CtrUsuario {
         
         con.fecharConexao();
         
+    }
+    
+    public static UsuarioLogin getUsuarioLogin(){
+        return usuarioLogin;
+    }
+
+    public static void UpdateUsuario() {
+        Conexao con = new Conexao();
+        con.abrirConexao();
+        
+        BancoUsuario.UpdateUsuario(con, usuarioLogin.getUsuarioId(), login, senha, nome, cpfCnpj, emails, telefones, enderecos);
+        
+        con.fecharConexao();
     }
     
 }

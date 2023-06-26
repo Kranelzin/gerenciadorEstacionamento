@@ -112,4 +112,17 @@ public class Biblioteca {
         
         return true;
     }
+
+    public static String inserirListaSql(ArrayList<Integer> lista) {
+        String sql = "";
+        
+        for(int i = 0; i < lista.size(); i++){
+            if(i == lista.size())
+                sql += lista.get(i);
+            else
+                sql+= lista.get(i) + ",";
+        }
+        
+        return sql;
+    }
 }

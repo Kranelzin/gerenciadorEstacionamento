@@ -18,6 +18,7 @@ import objetos.Veiculo;
  */
 public class CtrCliente {
     
+    private static Cliente cliente;
     private static String nome;
     private static String cpfCnpj;
     private static ArrayList<Endereco> enderecos;
@@ -86,6 +87,22 @@ public class CtrCliente {
         }
         
         con.fecharConexao();
+    }
+
+    public static Cliente getCliente() {
+        return cliente;
+    }
+
+    public static void setCliente(String nomeCliente) {
+        
+        Conexao con = new Conexao();
+        
+        con.abrirConexao(true);
+        
+        cliente = BancoCliente.buscarCliente(con, nomeCliente);
+        
+        con.fecharConexao();
+        
     }
 
 }
