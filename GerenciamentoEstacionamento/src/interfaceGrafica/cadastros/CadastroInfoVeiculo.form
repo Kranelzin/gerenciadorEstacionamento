@@ -44,19 +44,25 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="lbSenha" min="-2" max="-2" attributes="0"/>
-                          <Component id="lbSenhaRepetida" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="lbLogin" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="lbUltimoVeiculo" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="lbSenha" min="-2" max="-2" attributes="0"/>
+                                  <Component id="lbSenhaRepetida" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="lbLogin" alignment="0" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="99" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Component id="tfPlaca" min="-2" pref="100" max="-2" attributes="0"/>
+                                  <Component id="tfMarca" min="-2" pref="100" max="-2" attributes="0"/>
+                                  <Component id="tfModelo" min="-2" pref="100" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
+                              <Component id="btVeiculo" min="-2" pref="50" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="btVeiculoRemover" min="-2" pref="50" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="spVeiculo" min="-2" pref="150" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="99" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="tfPlaca" min="-2" pref="100" max="-2" attributes="0"/>
-                          <Component id="tfMarca" min="-2" pref="100" max="-2" attributes="0"/>
-                          <Component id="tfModelo" min="-2" pref="100" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
-                      <Component id="btVeiculo" min="-2" pref="50" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace pref="307" max="32767" attributes="0"/>
@@ -88,10 +94,11 @@
                   <Component id="lbSenhaRepetida" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="tfMarca" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btVeiculo" alignment="3" min="-2" pref="24" max="-2" attributes="0"/>
+                  <Component id="btVeiculoRemover" alignment="3" min="-2" pref="24" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="lbUltimoVeiculo" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="228" max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="spVeiculo" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="212" max="-2" attributes="0"/>
               <Component id="btProximo" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
           </Group>
@@ -163,12 +170,20 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btVeiculoActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JLabel" name="lbUltimoVeiculo">
+    <Component class="javax.swing.JSpinner" name="spVeiculo">
+      <Events>
+        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="spVeiculoStateChanged"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="btVeiculoRemover">
       <Properties>
-        <Property name="text" type="java.lang.String" value="jLabel1"/>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Dialog" size="18" style="1"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="-"/>
       </Properties>
       <Events>
-        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lbUltimoVeiculoMouseClicked"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btVeiculoRemoverActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

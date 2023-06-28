@@ -1,7 +1,9 @@
 package banco;
 
+import Repositorio.Biblioteca;
 import banco.comandos.Conexao;
 import banco.comandos.Consulta;
+import banco.comandos.Delete;
 import banco.comandos.Insert;
 import banco.comandos.Update;
 import enums.Meses;
@@ -208,7 +210,7 @@ public class BancoCliente {
         
         consulta.setSql(sql.toString());
         
-        consulta.executarComando(new Object[]{});
+        consulta.executarComando(new Object[]{nomeCliente});
         
         while(!consulta.fimConsulta()){
 
@@ -225,7 +227,7 @@ public class BancoCliente {
         ArrayList<Telefone> telefones = BancoUsuario.buscarTelefonesUsuario(con, usuarioId);
         ArrayList<Endereco> enderecos = BancoUsuario.buscarEnderecosUsuario(con, usuarioId);
         ArrayList<Veiculo>  veiculos = buscarVeiculos(con, usuarioId);
-        ArrayList<BoxVaga> boxVagas = buscarBoxVaga(con, usuarioId);
+        ArrayList<BoxVaga> boxVagas = buscarBoxVagas(con, usuarioId);
         Mensalidade mensalidade = buscarMensalidade(con, usuarioId);
         
         cliente = new Cliente(
@@ -370,7 +372,7 @@ public class BancoCliente {
         return pagamentosMensalidade;
     }
 
-    private static ArrayList<BoxVaga> buscarBoxVaga(Conexao con, int usuarioId) {
+    private static ArrayList<BoxVaga> buscarBoxVagas(Conexao con, int usuarioId) {
         
         ArrayList<BoxVaga> boxVagas = new ArrayList<>();
         
@@ -386,12 +388,11 @@ public class BancoCliente {
         .append("  VAGA, ")
         .append("  VEICULO_USUARIO_ID, ")
         .append("  DATA_HORA_ULT_ENTRADA AS HORA_ENTRADA, ")
-        .append("  DATA_HORA_ULT_SAIDA AS HORA SAIDA")
+        .append("  DATA_HORA_ULT_SAIDA AS HORA_SAIDA ")
 
-        .append("FROM MENSALIDADE ")
+        .append("FROM BOX_VAGA ")
                 
-        .append("WHERE USUARIO_ID = ? ")
-        .append("AND DATA_FIM IS NULL ");
+        .append("WHERE USUARIO_ID = ? ");
         
         consulta.setSql(sql.toString());
 
@@ -456,5 +457,114 @@ public class BancoCliente {
         return veiculo;
     }
 
+    public static void updateCliente(
+        Conexao con, 
+        int usuarioId, 
+        String nome, 
+        String cpfCnpj, 
+        ArrayList<String> emails, 
+        ArrayList<Telefone> telefones, 
+        ArrayList<Endereco> enderecos, 
+        ArrayList<Veiculo> veiculos
+    ){
+        
+        BancoUsuario.UpdateUsuario(con, usuarioId, nome, nome, nome, cpfCnpj, emails, telefones, enderecos);
+        updateVeiculos(con, usuarioId, veiculos);
+    }
 
+    private static void updateVeiculos(Conexao con, int usuarioId, ArrayList<Veiculo> veiculos) {
+        
+        ArrayList<Integer> veiculoIds = getVeiculoIds(con,usuarioId);
+        deletarTabelaVeiculosUsuarios(con,usuarioId);
+        deletarTabelaVeiculos(con, veiculoIds);
+        inserirVeiculoUsuario(con, usuarioId, veiculos);
+        
+    }
+
+    private static ArrayList<Integer> getVeiculoIds(Conexao con, int usuarioId) {
+        ArrayList<Integer> veiculoIds = new ArrayList<>();
+        
+        Consulta consulta = con.novaConsulta();
+        
+        StringBuilder sql = new StringBuilder();
+        
+        sql
+        .append("SELECT ")
+        .append("  VEICULO_ID ")
+
+        .append("FROM VEICULO_USUARIO ")
+        
+        .append("WHERE USUARIO_ID = ? ");
+        
+        consulta.setSql(sql.toString());
+
+        consulta.executarComando(new Object[]{usuarioId});
+
+        while(!consulta.fimConsulta()){
+            veiculoIds.add(consulta.getInt("VEICULO_ID"));
+        }
+        
+        return veiculoIds;
+         
+    }
+
+    private static void deletarTabelaVeiculosUsuarios(Conexao con, int usuarioId) {
+        Delete deletar = con.novoDelete();
+        
+        StringBuilder sql = new StringBuilder();
+        
+        sql
+        .append("DELETE FROM VEICULUOS_USUARIO ")
+        .append("WHERE USUARIO_ID = ? ");
+        
+        deletar.setSql(sql.toString());
+        
+        deletar.executarComando(new Object[]{usuarioId});
+    }
+
+    private static void deletarTabelaVeiculos(Conexao con, ArrayList<Integer> veiculoIds) {
+        Delete deletar = con.novoDelete();
+        StringBuilder sql = new StringBuilder();
+        
+        sql
+        .append("DELETE ")
+        .append("FROM VEICULO ")  
+
+        .append("WHERE VEICULO_ID IN (" )
+        .append(Biblioteca.inserirListaSql(veiculoIds))
+        .append(")");
+        
+        deletar.setSql(sql.toString());
+        
+        deletar.executarComando();
+    }
+    
+    private static void updateMensalidade(Conexao con, int usuarioId, Mensalidade mensalidade) {
+        Update update = con.novoUpdate();
+        
+        StringBuilder sql = new StringBuilder();
+        
+        sql
+        .append("UPDATE MENSALIDADE ")
+        .append("SET ")
+                
+        .append("  VALOR_MENSALIDADE = = ? ")
+        .append("  DATA_INICIO = ? ")
+        .append("  DATA_FIM = ? ")
+        .append("  DIA_VENCIMENTO = ? ")
+
+        .append("WHERE USUARIO_ID = ? ");
+        
+        update.setSql(sql.toString());
+        
+        update.executarComando(
+            new Object[]{
+                usuarioId, 
+                mensalidade.getValorMensalidade(), 
+                mensalidade.getDataInicio(), 
+                mensalidade.getDataFim(),
+                mensalidade.getDiaVencimento()
+            }
+        );
+    }
 }

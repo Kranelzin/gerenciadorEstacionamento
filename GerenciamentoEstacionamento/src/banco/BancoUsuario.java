@@ -310,7 +310,7 @@ public class BancoUsuario {
         
         ArrayList<Endereco> enderecos = buscarEnderecosUsuario(con, usuarioId);
         
-        UsuarioLogin usuarioLogado = buscarUsuarioLogado(con, usuarioId, emails, telefones, enderecos);
+        UsuarioLogin usuarioLogado = buscarUsuarioLogin(con, usuarioId, emails, telefones, enderecos);
         
         return usuarioLogado;
         
@@ -457,7 +457,7 @@ public class BancoUsuario {
         return enderecos;
     }
 
-    private static UsuarioLogin buscarUsuarioLogado(
+    private static UsuarioLogin buscarUsuarioLogin(
         Conexao con, 
         int usuarioId,
         ArrayList<String> emails, 
@@ -773,12 +773,15 @@ public class BancoUsuario {
 
     private static void updateEmails(Conexao con, int usuarioId, ArrayList<String> emails) {
         
-        deletarEmails(con, usuarioId);
+        ArrayList<Integer> emailsId = getEmailsId(con, usuarioId);
+        
+        deletarTabelaEmailUsuario(con, usuarioId);
+        deletarTabelaEmail(con, emailsId);
         inserirEmails(con, usuarioId, emails);
         
     }
 
-    private static void deletarEmails(Conexao con, int usuarioId) {
+    private static ArrayList<Integer> getEmailsId(Conexao con, int usuarioId) {
         
         ArrayList<Integer> emailsId = new ArrayList<>();
         
@@ -804,11 +807,11 @@ public class BancoUsuario {
         while(!consulta.fimConsulta()){
             emailsId.add(consulta.getInt("EMAIL_ID"));
         }
-            
-        deletarTabelaEmailUsuario(con, emailsId);
+        
+        return emailsId;
     }
 
-    private static void deletarTabelaEmailUsuario(Conexao con, ArrayList<Integer> emailsId) {
+    private static void deletarTabelaEmailUsuario(Conexao con, int usuarioId) {
         Delete deletar = con.novoDelete();
         StringBuilder sql = new StringBuilder();
         
@@ -816,15 +819,11 @@ public class BancoUsuario {
         .append("DELETE ")
         .append("FROM EMAIL_USUARIO ")  
 
-        .append("WHERE EMAIL_ID IN (" )
-        .append(Biblioteca.inserirListaSql(emailsId))
-        .append(")");
+        .append("WHERE USUARIO_ID = ? " );
         
         deletar.setSql(sql.toString());
         
-        deletar.executarComando();
-        
-        deletarTabelaEmail(con, emailsId);
+        deletar.executarComando(new Object[]{usuarioId});
         
     }
 
@@ -847,11 +846,14 @@ public class BancoUsuario {
     }
 
     private static void updateTelefones(Conexao con, int usuarioId, ArrayList<Telefone> telefones) {
-        deletarTelefones(con, usuarioId);
+        
+        ArrayList<Integer> telefonesId = getTelefonesId(con, usuarioId);
+        deletarTabelaTelefoneUsuario(con, usuarioId);
+        deletarTabelaTelefone(con, telefonesId);
         inserirTelefones(con, usuarioId, telefones);
     }
 
-    private static void deletarTelefones(Conexao con, int usuarioId) {
+    private static ArrayList<Integer> getTelefonesId(Conexao con, int usuarioId) {
         ArrayList<Integer> telefonesId = new ArrayList<>();
         
         Consulta consulta = con.novaConsulta();
@@ -877,10 +879,10 @@ public class BancoUsuario {
             telefonesId.add(consulta.getInt("TELEFONE_ID"));
         }
             
-        deletarTabelaTeledoneUsuario(con, telefonesId);
+        return telefonesId;
     }
 
-    private static void deletarTabelaTeledoneUsuario(Conexao con, ArrayList<Integer> telefonesId) {
+    private static void deletarTabelaTelefoneUsuario(Conexao con, int usuarioId) {
         
         Delete deletar = con.novoDelete();
         StringBuilder sql = new StringBuilder();
@@ -889,15 +891,11 @@ public class BancoUsuario {
         .append("DELETE ")
         .append("FROM TELEFONE_USUARIO ")  
 
-        .append("WHERE TELEFONE_ID IN (" )
-        .append(Biblioteca.inserirListaSql(telefonesId))
-        .append(")");
+        .append("WHERE USUARIO_ID = ? " );
         
         deletar.setSql(sql.toString());
         
-        deletar.executarComando();
-        
-        deletarTabelaTelefone(con, telefonesId);
+        deletar.executarComando(new Object[]{usuarioId});
     }
 
     private static void deletarTabelaTelefone(Conexao con, ArrayList<Integer> telefonesId) {
@@ -918,11 +916,13 @@ public class BancoUsuario {
     }
 
     private static void updateEnderecos(Conexao con, int usuarioId, ArrayList<Endereco> enderecos) {
-        deletarEnderecos(con, usuarioId);
+        ArrayList<Integer> enderecosId = getEnderecosId(con, usuarioId);
+        deletarTabelaEnderecoUsuario(con, usuarioId);
+        deletarTabelaEndereco(con, enderecosId);
         inserirEnderecos(con, usuarioId, enderecos);
     }
 
-    private static void deletarEnderecos(Conexao con, int usuarioId) {
+    private static  ArrayList<Integer> getEnderecosId(Conexao con, int usuarioId) {
         ArrayList<Integer> enderecosId = new ArrayList<>();
         
         Consulta consulta = con.novaConsulta();
@@ -948,10 +948,10 @@ public class BancoUsuario {
             enderecosId.add(consulta.getInt("ENDERECO_ID"));
         }
             
-        deletarTabelaEnderecoUsuario(con, enderecosId);
+        return enderecosId;
     }
 
-    private static void deletarTabelaEnderecoUsuario(Conexao con, ArrayList<Integer> enderecosId) {
+    private static void deletarTabelaEnderecoUsuario(Conexao con, int usuarioId) {
         Delete deletar = con.novoDelete();
         StringBuilder sql = new StringBuilder();
         
@@ -959,15 +959,12 @@ public class BancoUsuario {
         .append("DELETE ")
         .append("FROM ENDERECO_USUARIO ")  
 
-        .append("WHERE ENDERECO_ID IN (" )
-        .append(Biblioteca.inserirListaSql(enderecosId))
-        .append(")");
+        .append("WHERE USUARIO_ID = ? " );
         
         deletar.setSql(sql.toString());
         
-        deletar.executarComando();
+        deletar.executarComando(new Object[]{usuarioId});
         
-        deletarTabelaEndereco(con, enderecosId);
     }
 
     private static void deletarTabelaEndereco(Conexao con, ArrayList<Integer> enderecosId) {
@@ -985,5 +982,36 @@ public class BancoUsuario {
         deletar.setSql(sql.toString());
         
         deletar.executarComando();
+    }
+
+    public static UsuarioLogin buscarUsuarioNome(Conexao con, String nomeUsuario) {
+        
+        int usuarioId = 0;
+        
+        Consulta consulta = con.novaConsulta();
+        
+        StringBuilder sql = new StringBuilder();
+        
+        sql
+        .append("SELECT ")
+        .append("  USUARIO_ID ")
+                
+        .append("FROM USUARIO ")
+
+        .append("WHERE NOME = ? ");
+        
+        consulta.setSql(sql.toString());
+        
+        consulta.executarComando(new Object[]{nomeUsuario});
+        
+        while(!consulta.fimConsulta()){
+
+            usuarioId = consulta.getInt("USUARIO_ID");
+
+        }
+        
+        UsuarioLogin usuario = getUsuarioLogin(con, usuarioId);
+        
+        return usuario;
     }
 }

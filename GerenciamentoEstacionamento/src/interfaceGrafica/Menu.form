@@ -27,7 +27,7 @@
               <EmptySpace min="-2" pref="59" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jButton12" min="-2" max="-2" attributes="0"/>
-                  <Component id="jButton11" min="-2" max="-2" attributes="0"/>
+                  <Component id="btLotarVaga" min="-2" max="-2" attributes="0"/>
                   <Component id="jButton10" min="-2" max="-2" attributes="0"/>
                   <Component id="jButton9" min="-2" max="-2" attributes="0"/>
                   <Component id="btCadastros" min="-2" max="-2" attributes="0"/>
@@ -46,7 +46,7 @@
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="jButton10" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="jButton11" min="-2" max="-2" attributes="0"/>
+              <Component id="btLotarVaga" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="jButton12" min="-2" max="-2" attributes="0"/>
               <EmptySpace pref="140" max="32767" attributes="0"/>
@@ -73,10 +73,13 @@
         <Property name="text" type="java.lang.String" value="Receber Pagamento"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="jButton11">
+    <Component class="javax.swing.JButton" name="btLotarVaga">
       <Properties>
         <Property name="text" type="java.lang.String" value="Lotar Vaga"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btLotarVagaActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="jButton12">
       <Properties>

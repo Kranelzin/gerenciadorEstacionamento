@@ -105,4 +105,11 @@ public class CtrCliente {
         
     }
 
+    public static void updateCliente() {
+        Conexao con = new Conexao();
+        con.abrirConexao();
+        
+        BancoCliente.updateCliente(con, cliente.getUsuarioId(), nome, cpfCnpj, emails, telefones, enderecos, veiculos);
+    }
+
 }

@@ -2,6 +2,7 @@ package interfaceGrafica.cadastros;
 
 import controladores.CtrInterfacesGraficas;
 import enums.TipoCadastro;
+import enums.TipoUsuario;
 import interfaceGrafica.Menu;
 
 /**
@@ -23,12 +24,14 @@ public class MenuCadastros extends javax.swing.JFrame {
         btCadastrarCliente = new javax.swing.JButton();
         btCadastrarFuncionario = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
+        btEditarCliente = new javax.swing.JButton();
+        btEditarFuncionario = new javax.swing.JButton();
+        btEditarAdmin = new javax.swing.JButton();
         btCadastrarVaga = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
         btVoltar = new javax.swing.JButton();
+        btCadastroMensalidade = new javax.swing.JButton();
+        btEditarMensalidade = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -53,11 +56,26 @@ public class MenuCadastros extends javax.swing.JFrame {
             }
         });
 
-        jButton4.setText("Editar Cliente");
+        btEditarCliente.setText("Editar Cliente");
+        btEditarCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btEditarClienteActionPerformed(evt);
+            }
+        });
 
-        jButton5.setText("Editar Funcionario");
+        btEditarFuncionario.setText("Editar Funcionário");
+        btEditarFuncionario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btEditarFuncionarioActionPerformed(evt);
+            }
+        });
 
-        jButton6.setText("Editar Admin");
+        btEditarAdmin.setText("Editar Admin");
+        btEditarAdmin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btEditarAdminActionPerformed(evt);
+            }
+        });
 
         btCadastrarVaga.setText("Cadastrar Vaga");
         btCadastrarVaga.addActionListener(new java.awt.event.ActionListener() {
@@ -75,54 +93,69 @@ public class MenuCadastros extends javax.swing.JFrame {
             }
         });
 
+        btCadastroMensalidade.setText("Cadastrar Mensalidade");
+        btCadastroMensalidade.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btCadastroMensalidadeActionPerformed(evt);
+            }
+        });
+
+        btEditarMensalidade.setText("Editar Mensalidade");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btCadastrarVaga)
-                    .addComponent(jButton8)
-                    .addComponent(btCadastrarFuncionario)
-                    .addComponent(jButton5))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 289, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton4)
-                    .addComponent(btCadastrarCliente)
-                    .addComponent(jButton3)
-                    .addComponent(jButton6))
-                .addGap(116, 116, 116))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btVoltar)
                 .addGap(24, 24, 24))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(40, 40, 40)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btCadastrarVaga)
+                    .addComponent(jButton8)
+                    .addComponent(btEditarMensalidade)
+                    .addComponent(btCadastroMensalidade))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 279, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton3)
+                    .addComponent(btEditarAdmin)
+                    .addComponent(btEditarCliente)
+                    .addComponent(btCadastrarCliente)
+                    .addComponent(btCadastrarFuncionario)
+                    .addComponent(btEditarFuncionario))
+                .addGap(93, 93, 93))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(104, 104, 104)
-                        .addComponent(btCadastrarVaga))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(btVoltar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btCadastrarCliente)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton8)
-                    .addComponent(jButton4))
-                .addGap(68, 68, 68)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btCadastrarFuncionario)
-                    .addComponent(jButton3))
+                        .addGap(42, 42, 42)
+                        .addComponent(btCadastrarVaga)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton8)
+                        .addGap(18, 18, 18)
+                        .addComponent(btCadastroMensalidade)
+                        .addGap(18, 18, 18)
+                        .addComponent(btEditarMensalidade))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(92, 92, 92)
+                        .addComponent(btCadastrarCliente)
+                        .addGap(18, 18, 18)
+                        .addComponent(btEditarCliente)
+                        .addGap(18, 18, 18)
+                        .addComponent(btCadastrarFuncionario)
+                        .addGap(18, 18, 18)
+                        .addComponent(btEditarFuncionario)))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton5)
-                    .addComponent(jButton6))
-                .addContainerGap(144, Short.MAX_VALUE))
+                .addComponent(jButton3)
+                .addGap(17, 17, 17)
+                .addComponent(btEditarAdmin)
+                .addContainerGap(95, Short.MAX_VALUE))
         );
 
         pack();
@@ -161,16 +194,40 @@ public class MenuCadastros extends javax.swing.JFrame {
         cadastroCliente.setVisible(true);
     }//GEN-LAST:event_btCadastrarClienteActionPerformed
 
+    private void btEditarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditarClienteActionPerformed
+        setVisible(false);
+        PesquisarUsuario pesquisa = new PesquisarUsuario(TipoUsuario.CLIENTE);
+        pesquisa.setVisible(true);
+    }//GEN-LAST:event_btEditarClienteActionPerformed
+
+    private void btCadastroMensalidadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCadastroMensalidadeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btCadastroMensalidadeActionPerformed
+
+    private void btEditarFuncionarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditarFuncionarioActionPerformed
+        setVisible(false);
+        PesquisarUsuario pesquisa = new PesquisarUsuario(TipoUsuario.FUNCIONARIO);
+        pesquisa.setVisible(true);
+    }//GEN-LAST:event_btEditarFuncionarioActionPerformed
+
+    private void btEditarAdminActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditarAdminActionPerformed
+        setVisible(false);
+        PesquisarUsuario pesquisa = new PesquisarUsuario(TipoUsuario.ADMIN);
+        pesquisa.setVisible(true);
+    }//GEN-LAST:event_btEditarAdminActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btCadastrarCliente;
     private javax.swing.JButton btCadastrarFuncionario;
     private javax.swing.JButton btCadastrarVaga;
+    private javax.swing.JButton btCadastroMensalidade;
+    private javax.swing.JButton btEditarAdmin;
+    private javax.swing.JButton btEditarCliente;
+    private javax.swing.JButton btEditarFuncionario;
+    private javax.swing.JButton btEditarMensalidade;
     private javax.swing.JButton btVoltar;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton8;
     // End of variables declaration//GEN-END:variables
 }

@@ -3,9 +3,13 @@ package interfaceGrafica.cadastros;
 import Repositorio.Biblioteca;
 import controladores.CtrCliente;
 import controladores.CtrInterfacesGraficas;
+import controladores.CtrUsuario;
 import enums.TipoCadastro;
 import enums.TipoUsuario;
+import interfaceGrafica.cadastros.CadastroInfoBasica;
+import interfaceGrafica.cadastros.MenuCadastros;
 import objetos.Cliente;
+import objetos.UsuarioLogin;
 /**
  *
  * @author marce
@@ -56,9 +60,7 @@ public class PesquisarUsuario extends javax.swing.JFrame {
 
         lbPesquisaCliente.setText("Digite o nome do cliente: ");
 
-        tfPesquisaCliente.setText("jTextField2");
-
-        btPesquisaCliente.setText("jButton1");
+        btPesquisaCliente.setText("Pesquisar");
         btPesquisaCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btPesquisaClienteActionPerformed(evt);
@@ -128,18 +130,50 @@ public class PesquisarUsuario extends javax.swing.JFrame {
     }//GEN-LAST:event_btVoltarActionPerformed
 
     private void btPesquisaClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btPesquisaClienteActionPerformed
-        String nomeCliente = tfPesquisaCliente.getText();
+        String nomeUsuario = tfPesquisaCliente.getText();
         
         switch(tipoUsuario){
             case CLIENTE:
-                Cliente cliente = CtrCliente.buscarCliente(nomeCliente);
+                CtrCliente.setCliente(nomeUsuario);
+                Cliente cliente = CtrCliente.getCliente();
         
-                if(cliente == null){
+                if(cliente == null || cliente.getTipo() != TipoUsuario.CLIENTE){
                     Biblioteca.exibirAlerta("Cliente não encontrado");
                     return;
                 }
-            
+                setVisible(false);
                 CadastroInfoBasica cadastroCliente = new CadastroInfoBasica(TipoCadastro.CLIENTE, false, true);
+                cadastroCliente.setVisible(true);
+                
+                break;
+                
+            case FUNCIONARIO:
+                CtrUsuario.setUsuario(nomeUsuario);
+                UsuarioLogin funcionario = CtrUsuario.getUsuarioLogin();
+        
+                if(funcionario == null || funcionario.getTipo() != TipoUsuario.FUNCIONARIO){
+                    Biblioteca.exibirAlerta("Funcionário não encontrado");
+                    return;
+                }
+                setVisible(false);
+                CadastroInfoBasica cadastroFuncionario = new CadastroInfoBasica(TipoCadastro.FUNCIONARIO, false, true);
+                cadastroFuncionario.setVisible(true);
+                break;
+                
+            case ADMIN:
+                CtrUsuario.setUsuario(nomeUsuario);
+                UsuarioLogin admin = CtrUsuario.getUsuarioLogin();
+        
+                if(admin == null || admin.getTipo() != TipoUsuario.ADMIN){
+                    Biblioteca.exibirAlerta("Funcionário não encontrado");
+                    return;
+                }
+                setVisible(false);
+                CadastroInfoBasica cadastroAdmin = new CadastroInfoBasica(TipoCadastro.ADMIN, false, true);
+                cadastroAdmin.setVisible(true);
+                break;
+                
+            default:
                 break;
         }
         

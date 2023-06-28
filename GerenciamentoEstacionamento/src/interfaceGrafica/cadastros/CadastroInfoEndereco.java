@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import javax.swing.SpinnerListModel;
 import objetos.Endereco;
 import objetos.CidadeEstado;
+import objetos.Cliente;
+import objetos.UsuarioLogin;
 
 /**
  *
@@ -37,6 +39,9 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         lbTitulo.setText("Cadastro " + tipoCadastro.getDescricao());
         configurarSpEndereco();
+        
+        if(update)
+            preencherInformacoes();
     }
     
     private boolean adicionarEndereco(){
@@ -410,8 +415,14 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
                     
                     if(cadastrarEmpresa)
                         CtrCadastroEmpresa.cadastrarNovaEmpresa();
-                    else
-                        CtrUsuario.cadastrarNovoUsuario();
+                    else{
+                        if(update){
+                            CtrUsuario.UpdateUsuario();
+                        }
+                        else{
+                            CtrUsuario.cadastrarNovoUsuario();
+                        }
+                    }
                     
                     Biblioteca.exibirAlerta("Salvo com sucesso!");
                     setVisible(false);
@@ -442,7 +453,7 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
 
                 CtrCliente.cadastroInfoEndereco(enderecos);
                 setVisible(false);
-                CadastroInfoVeiculo cadastroVeiculo = new CadastroInfoVeiculo(tipoCadastro);
+                CadastroInfoVeiculo cadastroVeiculo = new CadastroInfoVeiculo(tipoCadastro, update);
                 cadastroVeiculo.setVisible(true);
                 CtrInterfacesGraficas.setCadastroVeiculo(cadastroVeiculo);
                 break;
@@ -496,7 +507,7 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
             }
             
         }
-
+        configurarSpEndereco();
         limparCampos();
         spEndereco.setValue("Novo endereço");
     }//GEN-LAST:event_btEnderecoRemoverActionPerformed
@@ -594,5 +605,29 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
         }
         
         spEndereco.setModel(new SpinnerListModel(ruas));
+    }
+
+    private void preencherInformacoes() {
+        switch(tipoCadastro){
+            case CLIENTE:
+                Cliente cliente = CtrCliente.getCliente();
+                enderecos = cliente.getEndereco();
+                break;
+            case ADMIN:
+                UsuarioLogin admin = CtrUsuario.getUsuarioLogin();
+                enderecos = admin.getEndereco();
+                break;
+                
+            case FUNCIONARIO:
+                UsuarioLogin funcionario = CtrUsuario.getUsuarioLogin();
+                enderecos = funcionario.getEndereco();
+                break;
+            default:
+                break;
+        }
+        
+        spEndereco.setVisible(true);
+        configurarSpEndereco();
+        
     }
 }

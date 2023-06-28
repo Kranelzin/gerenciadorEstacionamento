@@ -616,10 +616,10 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
         }
         
         
-        if(!validarCpfCnpj(cpfCnpj)){
+        /*if(!validarCpfCnpj(cpfCnpj)){
             Biblioteca.exibirAlerta("CPF ou CNPJ inválido");
             return false;
-        }
+        }*/
         
         
         if(!adicionarEmail())
@@ -749,6 +749,7 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
     }
 
     private void preencherInformacoes() {
+        
         switch(tipoCadastro){
             case CLIENTE:
                 Cliente cliente = CtrCliente.getCliente();
@@ -782,6 +783,10 @@ public class CadastroInfoBasica extends javax.swing.JFrame {
                 break;
         }
         
+        spEmail.setVisible(true);
+        spTelefone.setVisible(true);
+        configurarSpEmail();
+        configurarSpTelefone();
         
     }
 }

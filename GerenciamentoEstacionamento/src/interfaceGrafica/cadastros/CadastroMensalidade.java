@@ -22,8 +22,10 @@ public class CadastroMensalidade extends javax.swing.JFrame {
     SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
     
     private ArrayList<BoxVaga> boxVagas = new ArrayList<>();
+    private boolean update = false;
     
-    public CadastroMensalidade() throws ParseException {
+    public CadastroMensalidade(boolean update) throws ParseException {
+        this.update = update;
         initComponents();
         setLocationRelativeTo(null);
         MaskFormatter mascara = new MaskFormatter("##/##/####");
@@ -205,8 +207,10 @@ public class CadastroMensalidade extends javax.swing.JFrame {
             return;
         }
         
-        if(!Biblioteca.somenteNumeros(valor))
+        if(!Biblioteca.somenteNumeros(valor)){
             Biblioteca.exibirAlerta("O valor digitado é inválido");
+            return;
+        }
         
         if(!adicionarBoxVaga())
             return;
@@ -275,8 +279,14 @@ public class CadastroMensalidade extends javax.swing.JFrame {
 
     private void configurarSpinnerBoxVaga() {
         ArrayList<BoxVaga> boxVagas = CtrBoxVaga.getBoxVagasDisponiveis();
-        if(boxVagas.size() == 0)
+        
+        if(boxVagas.size() == 0){
+            Biblioteca.exibirAlerta("Todas as vagas estão reservadas ou em uso no momento");
+            setVisible(false);
+            CadastroInfoVeiculo cadastroVeiculo = CtrInterfacesGraficas.getCadastroInfoVeiculo();
+            cadastroVeiculo.setVisible(true);
             return;
+        }
         
         ArrayList<String> codigosVagas = new ArrayList<>();
         

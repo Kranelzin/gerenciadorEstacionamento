@@ -22,7 +22,7 @@ public class Menu extends javax.swing.JFrame {
         btCadastros = new javax.swing.JButton();
         jButton9 = new javax.swing.JButton();
         jButton10 = new javax.swing.JButton();
-        jButton11 = new javax.swing.JButton();
+        btLotarVaga = new javax.swing.JButton();
         jButton12 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -38,7 +38,12 @@ public class Menu extends javax.swing.JFrame {
 
         jButton10.setText("Receber Pagamento");
 
-        jButton11.setText("Lotar Vaga");
+        btLotarVaga.setText("Lotar Vaga");
+        btLotarVaga.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btLotarVagaActionPerformed(evt);
+            }
+        });
 
         jButton12.setText("Liberar Vaga");
 
@@ -50,7 +55,7 @@ public class Menu extends javax.swing.JFrame {
                 .addGap(59, 59, 59)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton12)
-                    .addComponent(jButton11)
+                    .addComponent(btLotarVaga)
                     .addComponent(jButton10)
                     .addComponent(jButton9)
                     .addComponent(btCadastros))
@@ -66,7 +71,7 @@ public class Menu extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jButton10)
                 .addGap(18, 18, 18)
-                .addComponent(jButton11)
+                .addComponent(btLotarVaga)
                 .addGap(18, 18, 18)
                 .addComponent(jButton12)
                 .addContainerGap(140, Short.MAX_VALUE))
@@ -82,11 +87,15 @@ public class Menu extends javax.swing.JFrame {
         menuCadastros.setVisible(true);
     }//GEN-LAST:event_btCadastrosActionPerformed
 
+    private void btLotarVagaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btLotarVagaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btLotarVagaActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btCadastros;
+    private javax.swing.JButton btLotarVaga;
     private javax.swing.JButton jButton10;
-    private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton9;
     // End of variables declaration//GEN-END:variables

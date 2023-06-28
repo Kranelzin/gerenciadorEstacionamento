@@ -6,6 +6,9 @@ import controladores.CtrInterfacesGraficas;
 import enums.TipoCadastro;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import javax.swing.SpinnerListModel;
+import objetos.Cliente;
+import objetos.Endereco;
 import objetos.Veiculo;
 
 /**
@@ -15,11 +18,16 @@ import objetos.Veiculo;
 public class CadastroInfoVeiculo extends javax.swing.JFrame {
     
     private ArrayList<Veiculo> veiculos = new ArrayList<>();
-    public CadastroInfoVeiculo(TipoCadastro tipoCadastro){
+    private boolean update = false;
+    
+    public CadastroInfoVeiculo(TipoCadastro tipoCadastro, boolean update){
         initComponents();
         setLocationRelativeTo(null);
         lbTitulo.setText("Cadastro " + tipoCadastro.getDescricao());
-        lbUltimoVeiculo.setVisible(false);
+        configurarSpVeiculo();
+        
+        if(update)
+            preencherInformacoes();
      }
 
     @SuppressWarnings("unchecked")
@@ -37,7 +45,8 @@ public class CadastroInfoVeiculo extends javax.swing.JFrame {
         tfMarca = new javax.swing.JTextField();
         tfModelo = new javax.swing.JTextField();
         btVeiculo = new javax.swing.JButton();
-        lbUltimoVeiculo = new javax.swing.JLabel();
+        spVeiculo = new javax.swing.JSpinner();
+        btVeiculoRemover = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -75,10 +84,17 @@ public class CadastroInfoVeiculo extends javax.swing.JFrame {
             }
         });
 
-        lbUltimoVeiculo.setText("jLabel1");
-        lbUltimoVeiculo.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbUltimoVeiculoMouseClicked(evt);
+        spVeiculo.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                spVeiculoStateChanged(evt);
+            }
+        });
+
+        btVeiculoRemover.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        btVeiculoRemover.setText("-");
+        btVeiculoRemover.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btVeiculoRemoverActionPerformed(evt);
             }
         });
 
@@ -104,17 +120,21 @@ public class CadastroInfoVeiculo extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(39, 39, 39)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lbSenha)
-                            .addComponent(lbSenhaRepetida)
-                            .addComponent(lbLogin)
-                            .addComponent(lbUltimoVeiculo))
-                        .addGap(99, 99, 99)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(tfPlaca, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(tfMarca, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(tfModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(32, 32, 32)
-                        .addComponent(btVeiculo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lbSenha)
+                                    .addComponent(lbSenhaRepetida)
+                                    .addComponent(lbLogin))
+                                .addGap(99, 99, 99)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(tfPlaca, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(tfMarca, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(tfModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(32, 32, 32)
+                                .addComponent(btVeiculo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btVeiculoRemover, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(spVeiculo, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(307, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -138,10 +158,11 @@ public class CadastroInfoVeiculo extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbSenhaRepetida)
                     .addComponent(tfMarca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btVeiculo, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lbUltimoVeiculo)
-                .addGap(228, 228, 228)
+                    .addComponent(btVeiculo, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btVeiculoRemover, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(spVeiculo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(212, 212, 212)
                 .addComponent(btProximo)
                 .addGap(14, 14, 14))
         );
@@ -153,13 +174,20 @@ public class CadastroInfoVeiculo extends javax.swing.JFrame {
         if(!adicionarVeiculo())
             return;
         CtrCliente.cadastroInfoVeiculo(veiculos);
+        
+        if(update){
+            CtrCliente.updateCliente();
+            Biblioteca.exibirAlerta("Dados salvos com sucesso ");
+            return;
+        }
+        
         int resposta = Biblioteca.exibirCaixaDialogo("Cadastrar Mensalidade", "Deseja cadastrar o cliente como mensalista? ");
         
         switch(resposta){
             case JOptionPane.YES_OPTION:
                 try{
                     setVisible(false);
-                    CadastroMensalidade cadstroMensalidade = new CadastroMensalidade();
+                    CadastroMensalidade cadstroMensalidade = new CadastroMensalidade(update);
                     cadstroMensalidade.setVisible(true);
                 }
                 catch(Exception e){
@@ -170,10 +198,12 @@ public class CadastroInfoVeiculo extends javax.swing.JFrame {
             
             case JOptionPane.NO_OPTION:
                 try{
+
                     CtrCliente.cadastrarCliente();
                     setVisible(false);
                     MenuCadastros menuCadastros = new MenuCadastros();
                     menuCadastros.setVisible(true);
+                    
                 }
                 catch(Exception e){
                     Biblioteca.exibirAlerta("Falha ao cadastrar cliente" + e.getMessage());
@@ -195,29 +225,59 @@ public class CadastroInfoVeiculo extends javax.swing.JFrame {
         adicionarVeiculo();
     }//GEN-LAST:event_btVeiculoActionPerformed
 
-    private void lbUltimoVeiculoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbUltimoVeiculoMouseClicked
-       int ultimaPos = veiculos.size() - 1;
-        
-        veiculos.remove(ultimaPos);
-        
-        if(veiculos.size() == 0){
-            lbUltimoVeiculo.setVisible(false);
+    private void spVeiculoStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spVeiculoStateChanged
+        String placa = (String) spVeiculo.getValue();
+
+        if(placa.contentEquals("Novo veículo")){
+            limparCampos();
             return;
         }
+
+        Veiculo veiculo = null;
         
-        lbUltimoVeiculo.setText("QTD Veúculos: " + veiculos.size() + "; " + veiculos.get(ultimaPos - 1).getPlaca() + " X ");
-    }//GEN-LAST:event_lbUltimoVeiculoMouseClicked
+        for(Veiculo vec : veiculos){
+            if(vec.getPlaca().contentEquals(placa))
+                veiculo = vec;
+        }
+
+        if(veiculo == null)
+        return;
+
+        tfPlaca.setText(veiculo.getPlaca());
+        tfModelo.setText(veiculo.getModelo());
+        tfMarca.setText(veiculo.getMarca());
+
+    }//GEN-LAST:event_spVeiculoStateChanged
+
+    private void btVeiculoRemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btVeiculoRemoverActionPerformed
+        String placa = tfPlaca.getText();
+
+        if(placa.contentEquals(""))
+            return;
+
+        for(Veiculo veiculo : veiculos){
+            if(veiculo.getPlaca().contentEquals(placa)){
+                veiculos.remove(veiculo);
+                break;
+            }
+        }
+
+        configurarSpVeiculo();
+        limparCampos();
+        spVeiculo.setValue("Novo veículo");
+    }//GEN-LAST:event_btVeiculoRemoverActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btProximo;
     private javax.swing.JButton btVeiculo;
+    private javax.swing.JButton btVeiculoRemover;
     private javax.swing.JButton btVoltar;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel lbLogin;
     private javax.swing.JLabel lbSenha;
     private javax.swing.JLabel lbSenhaRepetida;
     private javax.swing.JLabel lbTitulo;
-    private javax.swing.JLabel lbUltimoVeiculo;
+    private javax.swing.JSpinner spVeiculo;
     private javax.swing.JTextField tfMarca;
     private javax.swing.JTextField tfModelo;
     private javax.swing.JTextField tfPlaca;
@@ -242,10 +302,8 @@ public class CadastroInfoVeiculo extends javax.swing.JFrame {
         Veiculo veiculo = new Veiculo(placa,modelo, marca);
         
         veiculos.add(veiculo);
-        
-        lbUltimoVeiculo.setText("QTD Veiculos: " + veiculos.size() + "; " + veiculo.getPlaca() + " X ");
-        lbUltimoVeiculo.setVisible(true);
-        
+        configurarSpVeiculo();
+        spVeiculo.setVisible(true);
         limparCampos();
         return true;
     }
@@ -256,5 +314,22 @@ public class CadastroInfoVeiculo extends javax.swing.JFrame {
         tfMarca.setText("");
     }
 
+    private void preencherInformacoes() {
+        Cliente cliente = CtrCliente.getCliente();
+        veiculos = cliente.getVeiculos();
+        configurarSpVeiculo();
+        spVeiculo.setVisible(true);
+ 
+    }
+
+    private void configurarSpVeiculo() {
+        ArrayList<String> placas = new ArrayList<>();
+        placas.add("Novo veículo");
+        
+        for(Veiculo veiculo : veiculos)
+            placas.add(veiculo.getPlaca());
+        
+        spVeiculo.setModel(new SpinnerListModel(placas));
+    }
 }
 

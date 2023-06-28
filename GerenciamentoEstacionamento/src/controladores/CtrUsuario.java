@@ -76,5 +76,14 @@ public class CtrUsuario {
         
         con.fecharConexao();
     }
+
+    public static void setUsuario(String nomeUsuario) {
+        Conexao con = new Conexao();
+        con.abrirConexao();
+        
+        usuarioLogin = BancoUsuario.buscarUsuarioNome(con, nomeUsuario);
+        
+        con.fecharConexao();
+    }
     
 }

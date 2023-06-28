@@ -44,6 +44,10 @@ public class Mensalidade{
         return dataInicio;
     }
     
+    public Date getDataFim() {
+        return dataFim;
+    }
+    
     public ArrayList<PagamentoMensalidade> getMesesPagamento(){
         
         Date data = new Date();
@@ -115,4 +119,5 @@ public class Mensalidade{
         this.dataFim = dataFim;
         ativa = false;
     }
+
 }
