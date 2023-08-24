@@ -73,6 +73,11 @@ public class Conexao{
         return new Delete(this);
     }
     
+    public Procedimento novoProcedimento(){
+        return new Procedimento(this);
+    }
+    
+    
     protected PreparedStatement getStatement(String sql, int generatedKeys) {
         try{
             if(generatedKeys == Statement.RETURN_GENERATED_KEYS)

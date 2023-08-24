@@ -1,6 +1,6 @@
 package controladores;
 
-import banco.CadastrarBuscarBoxVaga;
+import banco.BancoBoxVaga;
 import banco.comandos.Conexao;
 /**
  *
@@ -12,7 +12,7 @@ public class CtrCadastroBoxVaga {
         Conexao con = new Conexao();
         con.abrirConexao();
 
-        CadastrarBuscarBoxVaga.inerirNovoBoxVaga(con, CtrLogin.getEmpresa().getEmpresaId(), codigo, vaga);
+        BancoBoxVaga.inerirNovoBoxVaga(con, CtrLogin.getEmpresa().getEmpresaId(), codigo, vaga);
        
         con.fecharConexao();
 

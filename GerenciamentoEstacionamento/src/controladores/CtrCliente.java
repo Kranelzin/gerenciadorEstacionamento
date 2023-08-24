@@ -3,6 +3,7 @@ package controladores;
 import banco.BancoCliente;
 import banco.comandos.Conexao;
 import enums.TipoUsuario;
+import exceptions.EstacionarVagaException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -93,7 +94,7 @@ public class CtrCliente {
         return cliente;
     }
 
-    public static void setCliente(String nomeCliente) {
+    public static void setCliente(String nomeCliente) throws EstacionarVagaException {
         
         Conexao con = new Conexao();
         
@@ -105,11 +106,12 @@ public class CtrCliente {
         
     }
 
-    public static void updateCliente() {
+    public static void updateCliente() throws Exception {
         Conexao con = new Conexao();
         con.abrirConexao();
         
         BancoCliente.updateCliente(con, cliente.getUsuarioId(), nome, cpfCnpj, emails, telefones, enderecos, veiculos);
+        con.fecharConexao();
     }
 
 }

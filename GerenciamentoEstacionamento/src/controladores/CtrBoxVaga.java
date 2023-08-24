@@ -1,9 +1,11 @@
 package controladores;
 
-import banco.CadastrarBuscarBoxVaga;
+import banco.BancoBoxVaga;
 import banco.comandos.Conexao;
+import exceptions.EstacionarVagaException;
 import java.util.ArrayList;
 import objetos.BoxVaga;
+import objetos.Veiculo;
 
 /**
  *
@@ -24,8 +26,8 @@ public class CtrBoxVaga {
         return vagasDisponiveis;
     }
     
-    public static void setBoxVagas(Conexao con, int empresaId){
-        boxVagas = CadastrarBuscarBoxVaga.getBoxVagas(con, empresaId);
+    public static void setBoxVagas(Conexao con, int empresaId) throws EstacionarVagaException{
+        boxVagas = BancoBoxVaga.getBoxVagas(con, empresaId);
     }
 
     public static BoxVaga buscarVagaPorCodigo(String vaga) {
@@ -35,6 +37,24 @@ public class CtrBoxVaga {
         }
         
         return null;
+    }
+
+    public static void lotarVaga(int usuarioId, BoxVaga boxVaga) {
+        Conexao con = new Conexao();
+        con.abrirConexao();
+        
+        BancoBoxVaga.lotarVaga(con, usuarioId, boxVaga);
+        
+        con.fecharConexao();
+    }
+
+    public static void liberarVaga(BoxVaga vagaLiberar) {
+        Conexao con = new Conexao();
+        con.abrirConexao();
+        
+        BancoBoxVaga.liberarVaga(con, vagaLiberar);
+        
+        con.fecharConexao();
     }
         
 }

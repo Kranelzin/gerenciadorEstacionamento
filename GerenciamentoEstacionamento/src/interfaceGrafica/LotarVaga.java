@@ -1,27 +1,38 @@
 package interfaceGrafica;
 
 import Repositorio.Biblioteca;
+import controladores.CtrBoxVaga;
 import controladores.CtrCliente;
 import controladores.CtrInterfacesGraficas;
-import controladores.CtrUsuario;
-import enums.TipoCadastro;
 import enums.TipoUsuario;
-import interfaceGrafica.cadastros.CadastroInfoBasica;
-import interfaceGrafica.cadastros.MenuCadastros;
+import exceptions.EstacionarVagaException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.SpinnerListModel;
+import objetos.BoxVaga;
 import objetos.Cliente;
-import objetos.UsuarioLogin;
+import objetos.Veiculo;
 /**
  *
  * @author marce
  */
 public class LotarVaga extends javax.swing.JFrame {
     
-    private TipoUsuario tipoUsuario;
+    private ArrayList<Veiculo> veiculos = new ArrayList<>();
+    private ArrayList<BoxVaga> boxVagas = new ArrayList<>();
+    private Cliente cliente = null;
+    private Veiculo veiculo = null;
+    private BoxVaga boxVaga = null;
+    private boolean lotar = true;
     
-    public LotarVaga(TipoUsuario tipoUsuario){
-        this.tipoUsuario = tipoUsuario;
+    public LotarVaga(boolean lotar){
+        this.lotar = lotar;
         initComponents();
         setLocationRelativeTo(null);
+        configurarComponentes(false);
     }
     
     @SuppressWarnings("unchecked")
@@ -34,10 +45,10 @@ public class LotarVaga extends javax.swing.JFrame {
         lbPesquisaCliente = new javax.swing.JLabel();
         tfPesquisaCliente = new javax.swing.JTextField();
         btPesquisaCliente = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
+        lbVaga = new javax.swing.JLabel();
         spVaga = new javax.swing.JSpinner();
         spVeiculo = new javax.swing.JSpinner();
-        jLabel3 = new javax.swing.JLabel();
+        lbVeiculo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -61,6 +72,12 @@ public class LotarVaga extends javax.swing.JFrame {
 
         lbPesquisaCliente.setText("Digite o nome do cliente: ");
 
+        tfPesquisaCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tfPesquisaClienteActionPerformed(evt);
+            }
+        });
+
         btPesquisaCliente.setText("Pesquisar");
         btPesquisaCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -68,7 +85,13 @@ public class LotarVaga extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setText("Vaga");
+        lbVaga.setText("Vaga");
+
+        spVaga.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                spVagaStateChanged(evt);
+            }
+        });
 
         spVeiculo.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -76,7 +99,7 @@ public class LotarVaga extends javax.swing.JFrame {
             }
         });
 
-        jLabel3.setText("Veiculo");
+        lbVeiculo.setText("Veiculo");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -91,8 +114,8 @@ public class LotarVaga extends javax.swing.JFrame {
                         .addComponent(tfPesquisaCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3))
+                            .addComponent(lbVaga)
+                            .addComponent(lbVeiculo))
                         .addGap(124, 124, 124)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(spVeiculo)
@@ -129,12 +152,12 @@ public class LotarVaga extends javax.swing.JFrame {
                     .addComponent(btPesquisaCliente))
                 .addGap(44, 44, 44)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
+                    .addComponent(lbVaga)
                     .addComponent(spVaga, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(spVeiculo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
+                    .addComponent(lbVeiculo))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 158, Short.MAX_VALUE)
                 .addComponent(btProximo)
                 .addGap(18, 18, 18))
@@ -145,100 +168,179 @@ public class LotarVaga extends javax.swing.JFrame {
 
     private void btProximoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btProximoActionPerformed
         
+        if(cliente == null){
+            Biblioteca.exibirAlerta("Cliente não encontrado");
+            return;
+        }
         
+        String placa = (String) spVeiculo.getValue();
+        
+        for(Veiculo vec : veiculos){
+            if(vec.getPlaca().contentEquals(placa)){
+               veiculo = vec;
+               break;
+            }
+            
+        }
+        
+        if(veiculo == null){
+            Biblioteca.exibirAlerta("Nenhum veículo selecionado");
+            return;
+        }
+        
+        if(lotar){
+            String codigo = (String) spVaga.getValue();
+        
+            for(BoxVaga vaga : boxVagas){
+                if(vaga.getCodigoVaga().contentEquals(codigo)){
+                   boxVaga = vaga;
+                   break;
+                }
+
+            }
+        
+            if(boxVaga == null){
+                Biblioteca.exibirAlerta("Nenhuma vaga selecionada");
+                return;
+            }
+        
+            try{
+                cliente.estacionarVaga(new Timestamp(new Date().getTime()), boxVaga, veiculo);
+
+                CtrBoxVaga.lotarVaga(cliente.getUsuarioId(), boxVaga);
+
+                Biblioteca.exibirAlerta("Lotado com sucesso");
+                setVisible(false);
+                Menu menu = CtrInterfacesGraficas.getMenu();
+                menu.setVisible(true);
+            }
+            catch(Exception e){
+                Biblioteca.exibirAlerta("Erro ao lotar vaga: " + e.getMessage());
+            }
+        }
+        else{
+            try {
+                BoxVaga vagaLiberar = cliente.getBoxVagaPorVeiculo(veiculo);
+                cliente.liberarVaga(new Timestamp(new Date().getTime()), vagaLiberar);
+                
+                Biblioteca.exibirAlerta("Liberado com sucesso");
+                setVisible(false);
+                Menu menu = CtrInterfacesGraficas.getMenu();
+                menu.setVisible(true);
+                
+                CtrBoxVaga.liberarVaga(vagaLiberar);
+                
+            } catch (Exception e) {
+                Biblioteca.exibirAlerta("Nenhuma vaga encontrada para o veiculo selecionado");
+                return;
+            }
+        }
+        
+    
     }//GEN-LAST:event_btProximoActionPerformed
 
     private void btVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btVoltarActionPerformed
         setVisible(false);
-        MenuCadastros cadastro = CtrInterfacesGraficas.getMenuCadastros();
+        Menu cadastro = CtrInterfacesGraficas.getMenu();
         cadastro.setVisible(true);
     }//GEN-LAST:event_btVoltarActionPerformed
 
     private void btPesquisaClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btPesquisaClienteActionPerformed
         String nomeUsuario = tfPesquisaCliente.getText();
-
-        switch(tipoUsuario){
-            case CLIENTE:
+        
+        try {
             CtrCliente.setCliente(nomeUsuario);
-            Cliente cliente = CtrCliente.getCliente();
-
-            if(cliente == null || cliente.getTipo() != TipoUsuario.CLIENTE){
-                Biblioteca.exibirAlerta("Cliente não encontrado");
-                return;
-            }
-            setVisible(false);
-            CadastroInfoBasica cadastroCliente = new CadastroInfoBasica(TipoCadastro.CLIENTE, false, true);
-            cadastroCliente.setVisible(true);
-
-            break;
-
-            case FUNCIONARIO:
-            CtrUsuario.setUsuario(nomeUsuario);
-            UsuarioLogin funcionario = CtrUsuario.getUsuarioLogin();
-
-            if(funcionario == null || funcionario.getTipo() != TipoUsuario.FUNCIONARIO){
-                Biblioteca.exibirAlerta("Funcionário não encontrado");
-                return;
-            }
-            setVisible(false);
-            CadastroInfoBasica cadastroFuncionario = new CadastroInfoBasica(TipoCadastro.FUNCIONARIO, false, true);
-            cadastroFuncionario.setVisible(true);
-            break;
-
-            case ADMIN:
-            CtrUsuario.setUsuario(nomeUsuario);
-            UsuarioLogin admin = CtrUsuario.getUsuarioLogin();
-
-            if(admin == null || admin.getTipo() != TipoUsuario.ADMIN){
-                Biblioteca.exibirAlerta("Funcionário não encontrado");
-                return;
-            }
-            setVisible(false);
-            CadastroInfoBasica cadastroAdmin = new CadastroInfoBasica(TipoCadastro.ADMIN, false, true);
-            cadastroAdmin.setVisible(true);
-            break;
-
-            default:
-            break;
+        } catch (EstacionarVagaException e) {
+            Biblioteca.exibirAlerta("Erro ao buscar usuario: " + e.getMessage());
         }
+        cliente = CtrCliente.getCliente();
+
+        if(cliente == null || cliente.getTipo() != TipoUsuario.CLIENTE){
+            Biblioteca.exibirAlerta("Cliente não encontrado");
+            return;
+        }
+       
+        if(lotar){
+            veiculos = cliente.getVeiculos();
+            boxVagas = CtrBoxVaga.getBoxVagasDisponiveis();
+            configurarSpBoxaVagas();
+        }
+        else{
+            veiculos = cliente.getVeiculosLotadosVagas();
+            if(veiculos.size() == 0){
+                Biblioteca.exibirAlerta("Nenhuma vaga a ser liberada por esse cliente");
+                return;
+            }
+        }
+        
+        configurarSpVeiculos();
+        configurarComponentes(true);
 
     }//GEN-LAST:event_btPesquisaClienteActionPerformed
 
     private void spVeiculoStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spVeiculoStateChanged
-        String placa = (String) spVeiculo.getValue();
 
-        if(placa.contentEquals("Novo veículo")){
-            limparCampos();
-            return;
-        }
-
-        Veiculo veiculo = null;
-
-        for(Veiculo vec : veiculos){
-            if(vec.getPlaca().contentEquals(placa))
-            veiculo = vec;
-        }
-
-        if(veiculo == null)
-        return;
-
-        tfPlaca.setText(veiculo.getPlaca());
-        tfModelo.setText(veiculo.getModelo());
-        tfMarca.setText(veiculo.getMarca());
+            
     }//GEN-LAST:event_spVeiculoStateChanged
+
+    private void tfPesquisaClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfPesquisaClienteActionPerformed
+        
+    }//GEN-LAST:event_tfPesquisaClienteActionPerformed
+
+    private void spVagaStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spVagaStateChanged
+
+    }//GEN-LAST:event_spVagaStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btPesquisaCliente;
     private javax.swing.JButton btProximo;
     private javax.swing.JButton btVoltar;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel lbPesquisaCliente;
     private javax.swing.JLabel lbTitulo;
+    private javax.swing.JLabel lbVaga;
+    private javax.swing.JLabel lbVeiculo;
     private javax.swing.JSpinner spVaga;
     private javax.swing.JSpinner spVeiculo;
     private javax.swing.JTextField tfPesquisaCliente;
     // End of variables declaration//GEN-END:variables
+
+    private void configurarComponentes(boolean visivel) {
+       
+        lbVeiculo.setVisible(visivel);
+        spVeiculo.setVisible(visivel);
+        
+        if(!lotar)
+            visivel = false;
+        spVaga.setVisible(visivel);
+        lbVaga.setVisible(visivel);
+         
+        
+    }
+
+    private void configurarSpVeiculos() {
+        ArrayList<String> placas = new ArrayList<>();
+        
+        for(Veiculo veiculo : veiculos)
+            placas.add(veiculo.getPlaca());
+        
+        spVeiculo.setModel(new SpinnerListModel(placas));
+        
+    }
+
+    private void configurarSpBoxaVagas() {
+        
+        if(boxVagas.size() == 0){
+            Biblioteca.exibirAlerta("Todas as vagas estão reservadas ou em uso no momento");
+            return;
+        }
+        
+        ArrayList<String> codigosVagas = new ArrayList<>();
+        
+        for(BoxVaga boxVaga : boxVagas)
+            codigosVagas.add(boxVaga.getCodigoVaga());
+            
+        spVaga.setModel(new SpinnerListModel(codigosVagas));
+    }
 
 }
     

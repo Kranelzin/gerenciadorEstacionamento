@@ -33,8 +33,8 @@
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                          <Component id="lbVaga" min="-2" max="-2" attributes="0"/>
+                          <Component id="lbVeiculo" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="124" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -86,13 +86,13 @@
               </Group>
               <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="lbVaga" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="spVaga" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="spVeiculo" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="lbVeiculo" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace pref="158" max="32767" attributes="0"/>
               <Component id="btProximo" min="-2" max="-2" attributes="0"/>
@@ -135,6 +135,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="tfPesquisaCliente">
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tfPesquisaClienteActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btPesquisaCliente">
       <Properties>
@@ -144,19 +147,22 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btPesquisaClienteActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel2">
+    <Component class="javax.swing.JLabel" name="lbVaga">
       <Properties>
         <Property name="text" type="java.lang.String" value="Vaga"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JSpinner" name="spVaga">
+      <Events>
+        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="spVagaStateChanged"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JSpinner" name="spVeiculo">
       <Events>
         <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="spVeiculoStateChanged"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel3">
+    <Component class="javax.swing.JLabel" name="lbVeiculo">
       <Properties>
         <Property name="text" type="java.lang.String" value="Veiculo"/>
       </Properties>

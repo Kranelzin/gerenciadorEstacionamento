@@ -9,7 +9,9 @@ import exceptions.EstacionarVagaException;
 import java.sql.Timestamp;
 
 public class BoxVaga {
+    
     private int usuarioId;
+    private int empresaId;
     private final String codigo;
     private final int vaga;
     private Timestamp dataHoraUltEntrada;
@@ -19,19 +21,32 @@ public class BoxVaga {
     private Veiculo veiculo;
     
     public BoxVaga(
+        int empresaId,
         String codigo,
         int vaga,
         Timestamp dataHoraUltEntrada,
         Timestamp dataHoraUltSaida,
         boolean reservada,
         Veiculo veiculo
-    ){
+    ) throws EstacionarVagaException{
+        this.empresaId = empresaId;
         this.codigo = codigo;
         this.vaga = vaga;
         this.dataHoraUltEntrada = dataHoraUltEntrada;
         this.dataHoraUltSaida = dataHoraUltSaida;
         this.reservada = reservada;
         this.veiculo = veiculo;
+        
+        if(dataHoraUltEntrada != null && dataHoraUltSaida == null && veiculo != null){
+            estacionarVaga(dataHoraUltEntrada, veiculo, true);
+        }
+        else if(dataHoraUltSaida != null && veiculo != null){
+            liberarVaga(dataHoraUltSaida, true);
+        }
+    }
+    
+    public int getEmpresaId(){
+        return empresaId;
     }
     
     public int getUsuarioId(){
@@ -91,18 +106,28 @@ public class BoxVaga {
     }
     
     public void estacionarVaga(Timestamp dataHoraUltEntrada, Veiculo veiculo) throws EstacionarVagaException{
-        if(emUso)
+        estacionarVaga(dataHoraUltEntrada, veiculo, false);
+    }
+    
+    private void estacionarVaga(Timestamp dataHoraUltEntrada, Veiculo veiculo, boolean construtor) throws EstacionarVagaException{
+        if(emUso && ! construtor)
             throw new EstacionarVagaException(emUso, veiculo);
         
         this.dataHoraUltEntrada = dataHoraUltEntrada;
+        this.dataHoraUltSaida = null;
+        this.veiculo = veiculo;
         emUso = true;
     }
     
     public void liberarVaga(Timestamp dataHoraUltSaida) throws EstacionarVagaException{
-        if(!emUso)
+        liberarVaga(dataHoraUltSaida, false);
+    }
+    private void liberarVaga(Timestamp dataHoraUltSaida, boolean construtor) throws EstacionarVagaException{
+        if(!emUso && ! construtor)
             throw new EstacionarVagaException(!emUso, veiculo);
         
         this.dataHoraUltSaida = dataHoraUltSaida;
+        this.dataHoraUltEntrada = null;
         emUso = false;
         veiculo = null;
     }

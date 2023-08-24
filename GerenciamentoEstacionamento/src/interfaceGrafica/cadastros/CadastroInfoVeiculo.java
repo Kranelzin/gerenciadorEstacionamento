@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.SpinnerListModel;
 import objetos.Cliente;
-import objetos.Endereco;
 import objetos.Veiculo;
 
 /**
@@ -21,6 +20,7 @@ public class CadastroInfoVeiculo extends javax.swing.JFrame {
     private boolean update = false;
     
     public CadastroInfoVeiculo(TipoCadastro tipoCadastro, boolean update){
+        this.update = update;
         initComponents();
         setLocationRelativeTo(null);
         lbTitulo.setText("Cadastro " + tipoCadastro.getDescricao());
@@ -178,6 +178,9 @@ public class CadastroInfoVeiculo extends javax.swing.JFrame {
         if(update){
             CtrCliente.updateCliente();
             Biblioteca.exibirAlerta("Dados salvos com sucesso ");
+            MenuCadastros menu = new MenuCadastros();
+            setVisible(false);
+            menu.setVisible(true);
             return;
         }
         
@@ -318,6 +321,8 @@ public class CadastroInfoVeiculo extends javax.swing.JFrame {
         Cliente cliente = CtrCliente.getCliente();
         veiculos = cliente.getVeiculos();
         configurarSpVeiculo();
+        Object proximoVeiculo = spVeiculo.getNextValue();
+        spVeiculo.setValue(proximoVeiculo);
         spVeiculo.setVisible(true);
  
     }

@@ -4,7 +4,10 @@ import Repositorio.Biblioteca;
 import controladores.CtrInterfacesGraficas;
 import controladores.CtrLogin;
 import enums.TipoCadastro;
+import exceptions.EstacionarVagaException;
 import interfaceGrafica.cadastros.CadastroInfoBasica;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -110,14 +113,18 @@ public class Login extends javax.swing.JFrame {
         String login = tfLogin.getText().trim();
         String senha = new String(tfSenha.getPassword());
         
-        if(CtrLogin.logarUsuario(login, senha)){
-            setVisible(false);
-            Menu menu = new Menu();
-            CtrInterfacesGraficas.setMenu(menu);
-            menu.setVisible(true);
+        try {
+            if(CtrLogin.logarUsuario(login, senha)){
+                setVisible(false);
+                Menu menu = new Menu();
+                CtrInterfacesGraficas.setMenu(menu);
+                menu.setVisible(true);
+            }
+            else
+                Biblioteca.exibirAlerta("Usuario ou senha inválidos!");
+        } catch (EstacionarVagaException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
-        else
-            Biblioteca.exibirAlerta("Usuario ou senha inválidos!");
         
         tfSenha.setText("");
         

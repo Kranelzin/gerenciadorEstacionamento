@@ -23,6 +23,7 @@ public class CtrUsuario {
     private static ArrayList<Endereco> enderecos;
     private static ArrayList<String> emails;
     private static ArrayList<Telefone> telefones;
+    private static boolean ativo;
     
     public static void cadastroInfoBasica(
         String cadastroLogin,
@@ -31,7 +32,8 @@ public class CtrUsuario {
         String cadastroCpfCnpj, 
         ArrayList<String> cadastroEmails,
         ArrayList<Telefone> cadastroTelefones,
-        TipoUsuario cadastroTipoUsuario
+        TipoUsuario cadastroTipoUsuario,
+        boolean ativoCadastro
     ){
         login = cadastroLogin;
         senha = cadastroSenha;
@@ -40,6 +42,7 @@ public class CtrUsuario {
         emails = cadastroEmails;
         telefones = cadastroTelefones;
         tipoUsuario = cadastroTipoUsuario;
+        ativo = ativoCadastro;
     }
     
     public static void cadastroInfoEndereco(ArrayList<Endereco> cadastroEnderecos){
@@ -72,7 +75,7 @@ public class CtrUsuario {
         Conexao con = new Conexao();
         con.abrirConexao();
         
-        BancoUsuario.UpdateUsuario(con, usuarioLogin.getUsuarioId(), login, senha, nome, cpfCnpj, emails, telefones, enderecos);
+        BancoUsuario.UpdateUsuario(con, usuarioLogin.getUsuarioId(), login, senha, nome, cpfCnpj, emails, telefones, enderecos, ativo);
         
         con.fecharConexao();
     }

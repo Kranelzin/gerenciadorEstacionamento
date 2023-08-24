@@ -5,6 +5,7 @@ import banco.comandos.Conexao;
 import banco.comandos.Consulta;
 import banco.comandos.Delete;
 import banco.comandos.Insert;
+import banco.comandos.Procedimento;
 import banco.comandos.Update;
 import enums.Estados;
 import enums.TipoEndereco;
@@ -258,6 +259,7 @@ public class BancoUsuario {
         .append("INSERT INTO USUARIO_LOGIN ( ")
         .append("  LOGIN, ")
         .append("  SENHA, ")
+        .append("  ATIVO, ")
         .append("  USUARIO_ID ")
         .append(") ")
         .append("VALUES ( ")
@@ -268,7 +270,7 @@ public class BancoUsuario {
     
         insert.setSql(sql.toString());
         
-        insert.executarComando(new Object[]{login,senhaCodificada , usuarioId});
+        insert.executarComando(new Object[]{login, senhaCodificada, 0, usuarioId});
     }
     
     //BUSCAR INFORMAÇÕES
@@ -289,7 +291,8 @@ public class BancoUsuario {
         .append("FROM USUARIO_LOGIN ")                
 
         .append("WHERE LOGIN = ? ")
-        .append("AND SENHA = ? ");
+        .append("AND SENHA = ? ")
+        .append("AND ATIVO = 0 ");
         
         consulta.setSql(sql.toString());
         
@@ -436,8 +439,8 @@ public class BancoUsuario {
             
             CidadeEstado cidadeEstado = new CidadeEstado(
                 consulta.getInt("CIDADE_ID"),
-                consulta.getString("IBGE"),
                 consulta.getString("NOME"),
+                consulta.getString("IBGE"),
                 Estados.obterPorIndice(consulta.getInt("ESTADO_ID"))
             );
             
@@ -478,6 +481,7 @@ public class BancoUsuario {
         .append("  USU.NOME, ")
         .append("  USU.TIPO, ")
         .append("  USU.CPF_CNPJ, ")
+        .append("  USL.ATIVO, ")
         .append("  USU.EMPRESA_ID, ")
         .append("  USL.LOGIN, ")
         .append("  USL.SENHA ")
@@ -507,7 +511,8 @@ public class BancoUsuario {
                 telefones,
                 consulta.getString("LOGIN"),
                 consulta.getString("SENHA"),
-                empresaId
+                empresaId,
+                consulta.getBoolean("ATIVO")
             );
         }
         
@@ -725,9 +730,10 @@ public class BancoUsuario {
         String cpfCnpj, 
         ArrayList<String> emails, 
         ArrayList<Telefone> telefones, 
-        ArrayList<Endereco> enderecos
+        ArrayList<Endereco> enderecos,
+        boolean ativo
     ) {
-        updateUsuarioLogin(con, login, senha, usuarioId);
+        updateUsuarioLogin(con, login, senha, usuarioId, ativo);
         updateInfoUsuario(con, usuarioId, nome, cpfCnpj);
         updateEmails(con, usuarioId, emails);
         updateTelefones(con, usuarioId, telefones);
@@ -735,20 +741,21 @@ public class BancoUsuario {
        
     }
 
-    private static void updateUsuarioLogin(Conexao con, String login, String senha, int usuarioId) {
+    private static void updateUsuarioLogin(Conexao con, String login, String senha, int usuarioId, boolean ativo) {
         Update update = con.novoUpdate();
         
         StringBuilder sql = new StringBuilder();
         
         sql
         .append("UPDATE USUARIO_LOGIN ")
-        .append("SET LOGIN = ?, ")
+        .append("SET ATIVO = ?, ")
+        .append("LOGIN = ?, ")
         .append("SENHA = ? ")
         .append("WHERE USUARIO_ID = ? ");
         
         update.setSql(sql.toString());
         
-        update.executarComando(new Object[] {login, senha, usuarioId});
+        update.executarComando(new Object[] {ativo, login, senha, usuarioId});
     }
 
     public static void updateInfoUsuario(Conexao con, 
@@ -756,19 +763,9 @@ public class BancoUsuario {
         String nome, 
         String cpfCnpj
     ) {
-        Update update = con.novoUpdate();
+        Procedimento procedimento = con.novoProcedimento();
         
-        StringBuilder sql = new StringBuilder();
-        
-        sql
-        .append("UPDATE USUARIO ")
-        .append("SET NOME_RAZAO_SOCIAL = ?, ")
-        .append("CPF_CNPJ = ? ")
-        .append("WHERE USUARIO_ID = ? ");
-        
-        update.setSql(sql.toString());
-        
-        update.executarComando(new Object[] {nome, cpfCnpj, usuarioId});
+        procedimento.executarProcedimento("INSERT_UPDATE_CLIENTE", new Object[]{usuarioId, nome, cpfCnpj, 0});
     }
 
     private static void updateEmails(Conexao con, int usuarioId, ArrayList<String> emails) {
@@ -793,7 +790,7 @@ public class BancoUsuario {
         .append("SELECT ")
         .append("  EML.EMAIL_ID ")
                 
-        .append("FROM EMAILS EML ")
+        .append("FROM EMAIL EML ")
                 
         .append("INNER JOIN EMAIL_USUARIO EMU ")
         .append("ON EML.EMAIL_ID = EMU.EMAIL_ID ")
@@ -837,7 +834,7 @@ public class BancoUsuario {
 
         .append("WHERE EMAIL_ID IN (" )
         .append(Biblioteca.inserirListaSql(emailsId))
-        .append(")");
+        .append(") ");
         
         deletar.setSql(sql.toString());
         
@@ -1013,5 +1010,20 @@ public class BancoUsuario {
         UsuarioLogin usuario = getUsuarioLogin(con, usuarioId);
         
         return usuario;
+    }
+
+    static void UpdateUsuarioSemLogin(
+        Conexao con, 
+        int usuarioId, 
+        String nome, 
+        String cpfCnpj, 
+        ArrayList<String> emails, 
+        ArrayList<Telefone> telefones, 
+        ArrayList<Endereco> enderecos
+    ) {
+        updateInfoUsuario(con, usuarioId, nome, cpfCnpj);
+        updateEmails(con, usuarioId, emails);
+        updateTelefones(con, usuarioId, telefones);
+        updateEnderecos(con, usuarioId, enderecos);
     }
 }

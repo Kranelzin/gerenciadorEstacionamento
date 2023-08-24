@@ -19,7 +19,8 @@ public class Funcionario extends UsuarioLogin{
         ArrayList<Telefone> telefone,
         String login,
         String senha,
-        int empresaId
+        int empresaId,
+        boolean ativo
     ){
         super(
             usuarioId, 
@@ -31,7 +32,8 @@ public class Funcionario extends UsuarioLogin{
             telefone,
             login,
             senha,
-            empresaId
+            empresaId,
+            ativo
         );
         
     }

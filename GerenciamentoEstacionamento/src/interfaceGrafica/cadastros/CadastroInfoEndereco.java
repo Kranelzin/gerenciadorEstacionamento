@@ -354,28 +354,29 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
             return;
         }
         
-        ArrayList<String> componentesVerificar = new ArrayList<>();
-        componentesVerificar.add(tfCep.getText());
-        componentesVerificar.add(tfLogradouro.getText());
-        componentesVerificar.add(tfNumero.getText());
-        componentesVerificar.add(tfComplemento.getText());
-        componentesVerificar.add(tfBairro.getText());
-        componentesVerificar.add(tfCidade.getText());
-        componentesVerificar.add((String) spEstado.getValue());
+        String[] componentesVerificar = {
+            tfCep.getText(),
+            tfLogradouro.getText(),
+            tfNumero.getText(),
+            tfComplemento.getText(),
+            tfBairro.getText(),
+            tfCidade.getText(),
+            (String) spEstado.getValue()
+            };
         
         for(Endereco end : enderecos){
-            ArrayList<String> componentes = new ArrayList<>();
-            componentes.add(Integer.toString(end.getCep()));
-            componentes.add(end.getLogradouro());
-            componentes.add(Integer.toString(end.getNumero()));
-            componentes.add(end.getComplemento());
-            componentes.add(end.getBairro());
-            componentes.add(end.getCidadeEstado().getCidade());
-            componentes.add(end.getCidadeEstado().getEstado().getUF());
+            String[] componentes = {
+                Integer.toString(end.getCep()),
+                end.getLogradouro(),
+                Integer.toString(end.getNumero()),
+                end.getComplemento(),
+                end.getBairro(),
+                end.getCidadeEstado().getCidade(),
+                end.getCidadeEstado().getEstado().getUF()
+            };
             
             try {
                 if(Biblioteca.verificarContemNosComponentes(componentes, componentesVerificar)){
-                    Biblioteca.exibirAlerta("Endereço já adicionado");
                     return;
                 }
             } 
@@ -437,11 +438,16 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
             case FUNCIONARIO:
                 try{
                     CtrUsuario.cadastroInfoEndereco(enderecos);
-                    CtrUsuario.cadastrarNovoUsuario();
+                    if(update){
+                        CtrUsuario.UpdateUsuario();
+                    }
+                    else{
+                        CtrUsuario.cadastrarNovoUsuario();
+                    }
                     Biblioteca.exibirAlerta("Salvo com sucesso!");
                     setVisible(false);
                     MenuCadastros menu = new MenuCadastros();
-                    CtrInterfacesGraficas.setmMenuCadastros(menu);
+                    CtrInterfacesGraficas.setMenuCadastros(menu);
                     menu.setVisible(true);
                     
                 }
@@ -479,28 +485,30 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
         if(rua.contentEquals(""))
             return;
 
-        ArrayList<String> componentesVerificar = new ArrayList<>();
-        componentesVerificar.add(tfCep.getText());
-        componentesVerificar.add(tfLogradouro.getText());
-        componentesVerificar.add(tfNumero.getText());
-        componentesVerificar.add(tfComplemento.getText());
-        componentesVerificar.add(tfBairro.getText());
-        componentesVerificar.add(tfCidade.getText());
-        componentesVerificar.add((String) spEstado.getValue());
+        String[] componentesVerificar = {
+            tfCep.getText(),
+            tfLogradouro.getText(),
+            tfNumero.getText(),
+            tfComplemento.getText(),
+            tfBairro.getText(),
+            tfCidade.getText(),
+            (String) spEstado.getValue()
+            };
         
-        for(Endereco endereco : enderecos){
-            ArrayList<String> componentes = new ArrayList<>();
-            componentes.add(Integer.toString(endereco.getCep()));
-            componentes.add(endereco.getLogradouro());
-            componentes.add(Integer.toString(endereco.getNumero()));
-            componentes.add(endereco.getComplemento());
-            componentes.add(endereco.getBairro());
-            componentes.add(endereco.getCidadeEstado().getCidade());
-            componentes.add(endereco.getCidadeEstado().getEstado().getUF());
+        for(Endereco end : enderecos){
+            String[] componentes = {
+                Integer.toString(end.getCep()),
+                end.getLogradouro(),
+                Integer.toString(end.getNumero()),
+                end.getComplemento(),
+                end.getBairro(),
+                end.getCidadeEstado().getCidade(),
+                end.getCidadeEstado().getEstado().getUF()
+            };
             
             try {
                 if(Biblioteca.verificarContemNosComponentes(componentes, componentesVerificar))
-                    enderecos.remove(endereco);
+                    enderecos.remove(end);
             } 
             catch (Exception e) {
                 Biblioteca.exibirAlerta("Erro ao remover endereço");
@@ -628,6 +636,8 @@ public class CadastroInfoEndereco extends javax.swing.JFrame {
         
         spEndereco.setVisible(true);
         configurarSpEndereco();
+        Object proximoEndereco = spEndereco.getNextValue();
+        spEndereco.setValue(proximoEndereco);
         
     }
 }

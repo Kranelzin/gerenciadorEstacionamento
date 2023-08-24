@@ -11,6 +11,7 @@ public class UsuarioLogin extends Usuario{
     
     private final String login;
     private final String senha;
+    private final boolean ativo;
     
     public UsuarioLogin(
         int usuarioId, 
@@ -22,7 +23,8 @@ public class UsuarioLogin extends Usuario{
         ArrayList<Telefone> telefone,
         String login,
         String senha,
-        int empresaId
+        int empresaId,
+        boolean ativo
     
     ){
     
@@ -36,7 +38,7 @@ public class UsuarioLogin extends Usuario{
             telefone,
             empresaId
         );
-        
+        this.ativo = ativo;
         this.login = login;
         this.senha = senha;
 
@@ -48,5 +50,9 @@ public class UsuarioLogin extends Usuario{
     
     public String getSenha(){
         return senha;
+    }
+    
+    public boolean isAtivo(){
+        return ativo;
     }
 }

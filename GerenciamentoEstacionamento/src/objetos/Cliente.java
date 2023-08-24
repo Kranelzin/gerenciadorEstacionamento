@@ -5,6 +5,7 @@ package objetos;
  * @author marce
  */
 
+import Repositorio.Biblioteca;
 import enums.Meses;
 import enums.TipoUsuario;
 import exceptions.EstacionarVagaException;
@@ -129,6 +130,43 @@ public class Cliente extends Usuario{
             boxVaga.estacionarVaga(dataHoraSaida, veiculo);
         else
             throw new EstacionarVagaException(true, boxVaga.getVeiculo());
+    }
+
+    public ArrayList<Veiculo> getVeiculosLotadosVagas() {
+        
+        ArrayList<Veiculo> veiculosEmVaga = new ArrayList<>();
+
+        for(BoxVaga boxVaga : boxVagas){
+            if(boxVaga.getVeiculo() != null){
+                veiculosEmVaga.add(boxVaga.getVeiculo());
+            }
+        }
+        
+        return veiculosEmVaga;
+    }
+
+    public BoxVaga getBoxVagaPorVeiculo(Veiculo veiculo) throws Exception {
+        BoxVaga boxVagaVeiculo = null; 
+        
+        String[] componentes = {
+            veiculo.getPlaca(),
+            veiculo.getMarca(),
+            veiculo.getModelo()
+        };
+        
+        for(BoxVaga boxVaga : boxVagas){
+            String[] componentesComparar = {
+                boxVaga.getVeiculo().getPlaca(),
+                boxVaga.getVeiculo().getMarca(),
+                boxVaga.getVeiculo().getModelo()
+            };
+            
+            if(Biblioteca.verificarContemNosComponentes(componentes, componentesComparar)){
+                boxVagaVeiculo = boxVaga;
+            }
+        }
+        
+        return boxVagaVeiculo;
     }
                 
 }

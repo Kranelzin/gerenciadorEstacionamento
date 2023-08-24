@@ -45,7 +45,7 @@ public class CtrInterfacesGraficas {
         cadastroInfoEndereco = novaTela;
     }
     
-    public static void setmMenuCadastros(MenuCadastros novaTela){
+    public static void setMenuCadastros(MenuCadastros novaTela){
         menuCadastros = novaTela;
     }
     

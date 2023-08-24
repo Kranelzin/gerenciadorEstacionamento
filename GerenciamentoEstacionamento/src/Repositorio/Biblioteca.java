@@ -3,8 +3,13 @@ package Repositorio;
 import exceptions.SenhaException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JOptionPane;
 import javax.xml.bind.DatatypeConverter;
@@ -55,7 +60,7 @@ public class Biblioteca {
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
             byte[] encryptedBytes = cipher.doFinal(senha.getBytes());
             return DatatypeConverter.printBase64Binary(encryptedBytes);
-        } catch (Exception e) {
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
             throw new SenhaException("Falha ao codificar senha: " + e.getMessage());
         }
     }
@@ -99,13 +104,13 @@ public class Biblioteca {
         return true;
     }
     
-    public static boolean verificarContemNosComponentes(ArrayList<String> componentes, ArrayList<String> componentesVerificar) throws Exception{
+    public static boolean verificarContemNosComponentes(String[] componentes, String[]  componentesVerificar) throws Exception{
         
-        if(componentes.size() != componentesVerificar.size())
+        if(componentes.length != componentesVerificar.length)
             throw new Exception("verificarContemNosComponentes: listas com tamanhos diferentes! ");
         
-        for(int i =0; i < componentes.size(); i++){
-            if(!componentes.get(i).contentEquals(componentesVerificar.get(i)))
+        for(int i =0; i < componentes.length; i++){
+            if(!componentes[i].contentEquals(componentesVerificar[i]))
                 return false;
         }
         
@@ -117,7 +122,7 @@ public class Biblioteca {
         String sql = "";
         
         for(int i = 0; i < lista.size(); i++){
-            if(i == lista.size())
+            if(i == lista.size()-1)
                 sql += lista.get(i);
             else
                 sql+= lista.get(i) + ",";

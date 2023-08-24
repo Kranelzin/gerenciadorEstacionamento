@@ -6,6 +6,7 @@ import controladores.CtrInterfacesGraficas;
 import controladores.CtrUsuario;
 import enums.TipoCadastro;
 import enums.TipoUsuario;
+import exceptions.EstacionarVagaException;
 import interfaceGrafica.cadastros.CadastroInfoBasica;
 import interfaceGrafica.cadastros.MenuCadastros;
 import objetos.Cliente;
@@ -134,17 +135,24 @@ public class PesquisarUsuario extends javax.swing.JFrame {
         
         switch(tipoUsuario){
             case CLIENTE:
-                CtrCliente.setCliente(nomeUsuario);
-                Cliente cliente = CtrCliente.getCliente();
         
+                try {
+                    CtrCliente.setCliente(nomeUsuario);
+                } catch (EstacionarVagaException e) {
+                    Biblioteca.exibirAlerta("Erro ao buscar usuario: " + e.getMessage());
+                }
+
+                Cliente cliente = CtrCliente.getCliente();
+
                 if(cliente == null || cliente.getTipo() != TipoUsuario.CLIENTE){
                     Biblioteca.exibirAlerta("Cliente não encontrado");
                     return;
                 }
+
                 setVisible(false);
                 CadastroInfoBasica cadastroCliente = new CadastroInfoBasica(TipoCadastro.CLIENTE, false, true);
                 cadastroCliente.setVisible(true);
-                
+
                 break;
                 
             case FUNCIONARIO:
@@ -165,7 +173,7 @@ public class PesquisarUsuario extends javax.swing.JFrame {
                 UsuarioLogin admin = CtrUsuario.getUsuarioLogin();
         
                 if(admin == null || admin.getTipo() != TipoUsuario.ADMIN){
-                    Biblioteca.exibirAlerta("Funcionário não encontrado");
+                    Biblioteca.exibirAlerta("Admin não encontrado");
                     return;
                 }
                 setVisible(false);

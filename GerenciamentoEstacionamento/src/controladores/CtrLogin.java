@@ -2,6 +2,7 @@ package controladores;
 
 import banco.BancoUsuario;
 import banco.comandos.Conexao;
+import exceptions.EstacionarVagaException;
 import objetos.Empresa;
 import objetos.UsuarioLogin;
 
@@ -14,7 +15,7 @@ public class CtrLogin {
     private static UsuarioLogin usuarioLogado;
     private static Empresa empresa;
     
-    public static boolean logarUsuario(String login, String senha){
+    public static boolean logarUsuario(String login, String senha) throws EstacionarVagaException{
         Conexao con = new Conexao();
         con.abrirConexao(true);
         
@@ -29,7 +30,7 @@ public class CtrLogin {
         return retorno;
     }
     
-    private static void setUsuarioLogin(Conexao con, int usuarioId){
+    private static void setUsuarioLogin(Conexao con, int usuarioId) throws EstacionarVagaException{
         
         usuarioLogado = BancoUsuario.getUsuarioLogin(con, usuarioId);
         setEmpresa(con, usuarioLogado.getUsuarioId(), usuarioLogado.getEmpresaId());

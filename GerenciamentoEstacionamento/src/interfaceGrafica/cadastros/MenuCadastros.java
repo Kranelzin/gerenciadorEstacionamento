@@ -1,6 +1,7 @@
 package interfaceGrafica.cadastros;
 
 import controladores.CtrInterfacesGraficas;
+import controladores.CtrLogin;
 import enums.TipoCadastro;
 import enums.TipoUsuario;
 import interfaceGrafica.Menu;
@@ -14,6 +15,7 @@ public class MenuCadastros extends javax.swing.JFrame {
     public MenuCadastros() {
         initComponents();
         setLocationRelativeTo(null);
+        configurarAcesso();
     }
 
 
@@ -200,10 +202,6 @@ public class MenuCadastros extends javax.swing.JFrame {
         pesquisa.setVisible(true);
     }//GEN-LAST:event_btEditarClienteActionPerformed
 
-    private void btCadastroMensalidadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCadastroMensalidadeActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btCadastroMensalidadeActionPerformed
-
     private void btEditarFuncionarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditarFuncionarioActionPerformed
         setVisible(false);
         PesquisarUsuario pesquisa = new PesquisarUsuario(TipoUsuario.FUNCIONARIO);
@@ -215,6 +213,10 @@ public class MenuCadastros extends javax.swing.JFrame {
         PesquisarUsuario pesquisa = new PesquisarUsuario(TipoUsuario.ADMIN);
         pesquisa.setVisible(true);
     }//GEN-LAST:event_btEditarAdminActionPerformed
+
+    private void btCadastroMensalidadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCadastroMensalidadeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btCadastroMensalidadeActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -230,4 +232,15 @@ public class MenuCadastros extends javax.swing.JFrame {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton8;
     // End of variables declaration//GEN-END:variables
+
+    private void configurarAcesso() {
+        TipoUsuario tipoUsuario = CtrLogin.getUsuarioLogado().getTipo();
+        
+        if(tipoUsuario == TipoUsuario.FUNCIONARIO){
+            btCadastrarFuncionario.setVisible(false);
+            btEditarFuncionario.setVisible(false);
+            jButton3.setVisible(false);
+            btEditarAdmin.setVisible(false);
+        }
+    }
 }

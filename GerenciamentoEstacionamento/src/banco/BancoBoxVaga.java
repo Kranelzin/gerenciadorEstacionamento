@@ -3,7 +3,8 @@ package banco;
 import banco.comandos.Conexao;
 import banco.comandos.Consulta;
 import banco.comandos.Insert;
-import exceptions.BancoException;
+import banco.comandos.Update;
+import exceptions.EstacionarVagaException;
 import java.util.ArrayList;
 import objetos.BoxVaga;
 import objetos.Veiculo;
@@ -12,7 +13,7 @@ import objetos.Veiculo;
  *
  * @author marce
  */
-public class CadastrarBuscarBoxVaga {
+public class BancoBoxVaga {
     
     public static void inerirNovoBoxVaga(
             Conexao con, 
@@ -42,7 +43,7 @@ public class CadastrarBuscarBoxVaga {
 
     }
 
-    public static ArrayList<BoxVaga> getBoxVagas(Conexao con, int empresaId) {
+    public static ArrayList<BoxVaga> getBoxVagas(Conexao con, int empresaId) throws EstacionarVagaException {
         ArrayList<BoxVaga> boxVagas = new ArrayList<>();
         
         Consulta consulta = con.novaConsulta();
@@ -52,7 +53,8 @@ public class CadastrarBuscarBoxVaga {
         sql
         .append("SELECT ")
         .append("  USUARIO_ID, ")
-        .append("  VEICULO_USUARIO_ID, ")        
+        .append("  VEICULO_USUARIO_ID, ")     
+        .append("  EMPRESA_ID, ")
         .append("  CODIGO, ")
         .append("  VAGA, ")
         .append("  RESERVADA, ")
@@ -77,6 +79,7 @@ public class CadastrarBuscarBoxVaga {
                 veiculo = buscarVeiculo(con, veiculoUsuarioId);
          
             BoxVaga boxVaga = new BoxVaga(
+                consulta.getInt("EMPRESA_ID"),
                 consulta.getString("CODIGO"),
                 consulta.getInt("VAGA"),  
                 consulta.getTimestamp("DATA_HORA_ULT_ENTRADA"),
@@ -131,6 +134,92 @@ public class CadastrarBuscarBoxVaga {
         }
         
         return veiculo;
+    }
+
+    public static void lotarVaga(Conexao con, int usuarioId, BoxVaga boxVaga) {
+        
+        int veiculoUsuarioId = buscarVeiculoUsuarioId(con, usuarioId, boxVaga.getVeiculo());
+        
+        Update update = con.novoUpdate();
+        
+        StringBuilder sql = new StringBuilder();
+        
+        sql
+        .append("UPDATE BOX_VAGA SET ")
+        .append("  VEICULO_USUARIO_ID = ?, ")
+        .append("  USUARIO_ID = ?, ")
+        .append("  DATA_HORA_ULT_ENTRADA = ?, ")
+        .append("  DATA_HORA_ULT_SAIDA = ? ")
+        .append("WHERE CODIGO = ? ")
+        .append("AND VAGA = ? ")
+        .append("AND EMPRESA_ID = ? ");    
+        
+        update.setSql(sql.toString());
+        
+        update.executarComando(
+            new Object[]{
+                veiculoUsuarioId, 
+                usuarioId, 
+                boxVaga.getDataHoraUltEntrada(),
+                boxVaga.getDataHoraUltSaida(),
+                boxVaga.getCodigo(), 
+                boxVaga.getVaga(), 
+                boxVaga.getEmpresaId()
+            }
+        );
+    }
+
+    private static int buscarVeiculoUsuarioId(Conexao con, int usuarioId, Veiculo veiculo) {
+        
+        int veiculoUsuarioId = 0;
+        
+        Consulta consulta = con.novaConsulta();
+        
+        StringBuilder sql = new StringBuilder();
+        
+        sql
+        .append("SELECT ")
+        .append("  VEICULO_USUARIO_ID ")
+        .append("FROM VEICULO_USUARIO ")        
+        .append("WHERE USUARIO_ID = ? ")
+        .append("AND PLACA = ? ");
+        
+        consulta.setSql(sql.toString());
+        
+        consulta.executarComando(new Object[]{usuarioId, veiculo.getPlaca()});
+        
+        while(!consulta.fimConsulta()){
+            veiculoUsuarioId = consulta.getInt("VEICULO_USUARIO_ID");
+        }
+        
+        return veiculoUsuarioId;
+    }
+
+    public static void liberarVaga(Conexao con, BoxVaga vagaLiberar) {
+        Update update = con.novoUpdate();
+        
+        StringBuilder sql = new StringBuilder();
+        
+        sql
+        .append("UPDATE BOX_VAGA SET ")
+        .append("  VEICULO_USUARIO_ID = NULL, ")
+        .append("  USUARIO_ID = NULL, ")
+        .append("  DATA_HORA_ULT_ENTRADA = ?, ")
+        .append("  DATA_HORA_ULT_SAIDA = ? ")
+        .append("WHERE CODIGO = ? ")
+        .append("AND VAGA = ? ")
+        .append("AND EMPRESA_ID = ? ");    
+        
+        update.setSql(sql.toString());
+        
+        update.executarComando(
+            vagaLiberar.getDataHoraUltEntrada(),
+            vagaLiberar.getDataHoraUltSaida(),
+            vagaLiberar.getCodigo(),
+            vagaLiberar.getVaga(), 
+            vagaLiberar.getEmpresaId()
+            
+        );
     }
     
     
